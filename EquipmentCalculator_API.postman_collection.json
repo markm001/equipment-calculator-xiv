@@ -1,0 +1,465 @@
+{
+	"info": {
+		"_postman_id": "e36caef5-e1a2-40b5-8a8d-d743a83d4dac",
+		"name": "FFXIVAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23294855"
+	},
+	"item": [
+		{
+			"name": "GET all Items",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/Item",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"Item"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Item by ClassName & Lvl",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/search?indexes=Item&filters=ClassJobCategory.PLD=1,LevelEquip=90&columns=ID,Name,EquipSlotCategory.ID,Stats&limit=500",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "indexes",
+							"value": "Item"
+						},
+						{
+							"key": "filters",
+							"value": "ClassJobCategory.PLD=1,LevelEquip=90"
+						},
+						{
+							"key": "columns",
+							"value": "ID,Name,EquipSlotCategory.ID,Stats"
+						},
+						{
+							"key": "limit",
+							"value": "500"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Item by String",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/search?string=Augmented%20Radiant%27s%20Earrings%20of%20Aiming&string_algo=fuzzy&indexes=Item",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "string",
+							"value": "Augmented%20Radiant%27s%20Earrings%20of%20Aiming"
+						},
+						{
+							"key": "string_algo",
+							"value": "fuzzy"
+						},
+						{
+							"key": "indexes",
+							"value": "Item"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Item by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/item/35227",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"item",
+						"35227"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Item by itemlvl 81-90 & class TANK",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/search?filters=LevelItem>478,LevelItem<=480&ClassJobCategory.ID=159&page=2",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "filters",
+							"value": "LevelItem>478,LevelItem<=480",
+							"description": "ilvl 479-480"
+						},
+						{
+							"key": "ClassJobCategory.ID",
+							"value": "159",
+							"description": "Magical Ranged DPS"
+						},
+						{
+							"key": "page",
+							"value": "2",
+							"description": "Page"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Item by lvl & class",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/search?filters=LevelEquip=90,ClassJobCategory.ID=156",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "filters",
+							"value": "LevelEquip=90,ClassJobCategory.ID=156"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Item by Job & Lvl",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{host}}/search?indexes=Item&filters=ClassJobCategory.ID=66,LevelEquip=90",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "indexes",
+							"value": "Item"
+						},
+						{
+							"key": "filters",
+							"value": "ClassJobCategory.ID=66,LevelEquip=90"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Item by Class & Equip-Slot & Lvl",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/search?indexes=Item&filters=ClassJobCategory.ID=66,EquipSlotCategory.ID=4,LevelEquip=88",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "indexes",
+							"value": "Item"
+						},
+						{
+							"key": "filters",
+							"value": "ClassJobCategory.ID=66,EquipSlotCategory.ID=4,LevelEquip=88"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Item by class",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/search?filters=ClassJobCategory.ID=59",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "filters",
+							"value": "ClassJobCategory.ID=59"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Classes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://staging.xivapi.com/ClassJobCategory",
+					"protocol": "https",
+					"host": [
+						"staging",
+						"xivapi",
+						"com"
+					],
+					"path": [
+						"ClassJobCategory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Classes by page",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://staging.xivapi.com/ClassJobCategory?page=2",
+					"protocol": "https",
+					"host": [
+						"staging",
+						"xivapi",
+						"com"
+					],
+					"path": [
+						"ClassJobCategory"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET ItemSearchCategory - Primary/Secondary/etc.",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://staging.xivapi.com/ItemSearchCategory",
+					"protocol": "https",
+					"host": [
+						"staging",
+						"xivapi",
+						"com"
+					],
+					"path": [
+						"ItemSearchCategory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET ClassJobCategory - WAR,DRK,etc.",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://staging.xivapi.com/ClassJobCategory",
+					"protocol": "https",
+					"host": [
+						"staging",
+						"xivapi",
+						"com"
+					],
+					"path": [
+						"ClassJobCategory"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET EquipSlotCategory - Legs,Head,Feet",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://staging.xivapi.com/EquipSlotCategory/12",
+					"protocol": "https",
+					"host": [
+						"staging",
+						"xivapi",
+						"com"
+					],
+					"path": [
+						"EquipSlotCategory",
+						"12"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Character",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/search?indexes=character",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "indexes",
+							"value": "character"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Character Copy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/character/search?name=a&columns=ID,Character.GearSet",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"character",
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "a"
+						},
+						{
+							"key": "columns",
+							"value": "ID,Character.GearSet"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Character Copy 2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/character/search?name=a&columns=ID,Character.GearSet",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"character",
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "a"
+						},
+						{
+							"key": "columns",
+							"value": "ID,Character.GearSet"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "https://staging.xivapi.com",
+			"type": "string"
+		}
+	]
+}

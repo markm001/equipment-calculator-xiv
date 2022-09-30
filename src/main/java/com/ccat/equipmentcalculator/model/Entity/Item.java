@@ -13,6 +13,10 @@ public class Item {
     public Item() {
 
     }
+    //TODO: REMOVE LATER - Empty-Item
+    public Item(Long id) {
+        this.id = id;
+    }
     public Item(Long id, String name, int level, HashMap<String, Integer> statMap) {
         this.id = id;
         this.name = name;

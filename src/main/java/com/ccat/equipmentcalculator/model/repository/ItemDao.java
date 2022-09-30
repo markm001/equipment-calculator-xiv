@@ -11,17 +11,23 @@ public class ItemDao {
 
     public ItemDao() {
         HashMap<String, Integer> statMap= new HashMap<>();
+        HashMap<String, Integer> dupeMap= new HashMap<>();
         statMap.put("Strength", 100);
+        dupeMap.put("Strength", 100);
+        dupeMap.put("Dexterity", 300);
+
+        itemList.add(new Item(0L));
 
         itemList.add(new Item(1L,
                 "Chicken Tender",
                 90,
                 statMap));
 
+
         itemList.add(new Item(2L,
                 "Chicken Shield",
                 90,
-                statMap));
+                dupeMap));
     }
 
     public Optional<Item> findById(Long itemId) {

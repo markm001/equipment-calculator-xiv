@@ -5,7 +5,8 @@ import java.util.HashMap;
 public class GearSet {
     private Long id;
     private int characterLevel;
-    private HashMap<ItemSlot,Item> equippedItem;
+
+    private EquipmentList equippedItems;
 
     //Constructors:
     public GearSet() {
@@ -16,10 +17,10 @@ public class GearSet {
         this.characterLevel = characterLevel;
     }
 
-    public GearSet(Long id, int characterLevel, HashMap<ItemSlot,Item> equippedItem) {
+    public GearSet(Long id, int characterLevel, EquipmentList equippedItems) {
         this.id = id;
         this.characterLevel = characterLevel;
-        this.equippedItem = equippedItem;
+        this.equippedItems = equippedItems;
     }
 
     //Getters:
@@ -31,7 +32,7 @@ public class GearSet {
         return characterLevel;
     }
 
-    public HashMap<ItemSlot,Item> getEquippedItem() {
-        return equippedItem;
+    public EquipmentList getEquippedItem() {
+        return equippedItems;
     }
 }
