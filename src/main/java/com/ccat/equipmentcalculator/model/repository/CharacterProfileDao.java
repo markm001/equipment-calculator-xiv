@@ -1,11 +1,14 @@
 package com.ccat.equipmentcalculator.model.repository;
 
+import com.ccat.equipmentcalculator.exception.InvalidIdException;
 import com.ccat.equipmentcalculator.model.Entity.CharacterProfile;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class CharacterProfileDao {
@@ -18,6 +21,13 @@ public class CharacterProfileDao {
 
     public CharacterProfile save(CharacterProfile characterProfileRequest) {
         characterProfileList.add(characterProfileRequest);
+        return characterProfileRequest;
+    }
+
+    public CharacterProfile update(CharacterProfile characterProfileRequest) {
+        characterProfileList = characterProfileList.stream()
+                .map(p -> p.getId().equals(characterProfileRequest.getId())? characterProfileRequest : p)
+                .collect(Collectors.toList());
         return characterProfileRequest;
     }
 }

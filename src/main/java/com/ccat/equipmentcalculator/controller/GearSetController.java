@@ -26,28 +26,19 @@ public class GearSetController {
     //TODO: Implement PutMapping for adding List of Equipment Ids into EquipmentList(overwrite most recent Item)
 
     @PutMapping("/gearset/{id}")
-    public ResponseEntity<GearSet> updateGearSetEquipment(
+    public GearSet updateGearSetEquipment(
             @PathVariable(name="id") Long gearSetId,
             @RequestBody EquipmentList equipmentList) {
-        Optional<GearSet> gearSetResponse = gearSetService.updateGearSetEquipment(gearSetId, equipmentList);
-        if(gearSetResponse.isPresent()) {
-            return ResponseEntity.ok(gearSetResponse.get());
-        }
-        else {
-            return ResponseEntity.notFound().build();
-        }
+        GearSet gearSetResponse = gearSetService.updateGearSetEquipment(gearSetId, equipmentList);
+        return new GearSet(
+                gearSetResponse.getId(),
+                gearSetResponse.getGearClass(),
+                gearSetResponse.getItemLevel(),
+                gearSetResponse.getEquippedItems());
     }
 
     @RequestMapping("/gearset/{id}")
-    public ResponseEntity<GearSetResponse> findGearSetById(@PathVariable(name="id") Long setId) {
-
-        Optional<GearSetResponse> gearSetResponse = gearSetService.getGearSetById(setId);
-
-        if(gearSetResponse.isPresent()) {
-            return ResponseEntity.ok(gearSetResponse.get());
-        }
-        else {
-            return ResponseEntity.notFound().build();
-        }
+    public GearSetResponse getGearSetById(@PathVariable(name="id") Long setId) {
+        return gearSetService.getGearSetById(setId);
     }
 }

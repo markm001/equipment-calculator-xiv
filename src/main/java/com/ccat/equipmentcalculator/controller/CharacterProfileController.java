@@ -18,14 +18,13 @@ public class CharacterProfileController {
     }
 
     @RequestMapping("/profiles/{id}")
-    public ResponseEntity<CharacterProfile> getCharacterProfileById(@PathVariable(name="id") Long characterId) {
-        Optional<CharacterProfile> characterPrfileResponse = characterProfileService.getCharacterProfileById(characterId);
-        if(characterPrfileResponse.isPresent()) {
-            return ResponseEntity.ok(characterPrfileResponse.get());
-        }
-        else {
-            return ResponseEntity.notFound().build();
-        }
+    public CharacterProfile getCharacterProfileById(@PathVariable(name="id") Long characterId) {
+        CharacterProfile characterProfile = characterProfileService.getCharacterProfileById(characterId);
+        return new CharacterProfile(characterProfile.getId(),
+                characterProfile.getCharacterClass(),
+                characterProfile.getLevel(),
+                characterProfile.getGearSetId(),
+                characterProfile.getStatBlock());
     }
 
     @PostMapping("/profiles")
@@ -34,5 +33,10 @@ public class CharacterProfileController {
         return characterProfileService.createCharacterProfileWithClassAndLevel(CharacterProfileRequest);
     }
 
-    //TODO: Add PUT mapping & Statcalc implementation
+    @PutMapping("/profiles/{id}")
+    public CharacterProfile updateCharacterProfileWithGearSetId(
+            @PathVariable(name="id") Long profileId,
+            @RequestBody CharacterProfile characterProfileRequest) {
+        return characterProfileService.updateCharacterProfileGearSet(profileId,characterProfileRequest);
+    }
 }

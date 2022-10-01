@@ -4,9 +4,12 @@ import com.ccat.equipmentcalculator.model.Entity.Item;
 import com.ccat.equipmentcalculator.model.repository.ItemDao;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -18,7 +21,7 @@ public class ItemController {
     }
 
     @RequestMapping("/items/{id}")
-    public ResponseEntity<Item> getItem(@PathVariable(name="id") Long itemId) {
+    public ResponseEntity<Item> getItemById(@PathVariable(name="id") Long itemId) {
         Optional<Item> retrievedItem = itemDao.findById(itemId);
         if(retrievedItem.isPresent()) {
             return ResponseEntity.ok(retrievedItem.get());
@@ -27,4 +30,10 @@ public class ItemController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @RequestMapping("/items")
+    public List<Item> getItemsByListIds(@RequestBody List<Long> itemIds) {
+        return itemDao.findByIds(itemIds);
+    }
+
 }

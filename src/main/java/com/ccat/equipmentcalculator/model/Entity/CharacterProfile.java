@@ -16,7 +16,12 @@ public class CharacterProfile {
     }
 
     public CharacterProfile(CharacterClass characterClass, int level) {
+        this.characterClass = characterClass;
+        this.level = level;
+    }
 
+    public CharacterProfile(Long gearSetId) {
+        this.gearSetId = gearSetId;
     }
 
     public CharacterProfile(Long id, CharacterClass characterClass, int level, Long gearSetId, HashMap<String, Integer> statBlock) {
