@@ -1,434 +1,139 @@
 {
 	"info": {
-		"_postman_id": "e36caef5-e1a2-40b5-8a8d-d743a83d4dac",
-		"name": "FFXIVAPI",
+		"_postman_id": "77ae29cb-4257-44a8-ba39-3fa0a28ee4f9",
+		"name": "ItemCalculator API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "23294855"
 	},
 	"item": [
-		{
-			"name": "GET all Items",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{host}}/Item",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"Item"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET Item by ClassName & Lvl",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{host}}/search?indexes=Item&filters=ClassJobCategory.PLD=1,LevelEquip=90&columns=ID,Name,EquipSlotCategory.ID,Stats&limit=500",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"search"
-					],
-					"query": [
-						{
-							"key": "indexes",
-							"value": "Item"
-						},
-						{
-							"key": "filters",
-							"value": "ClassJobCategory.PLD=1,LevelEquip=90"
-						},
-						{
-							"key": "columns",
-							"value": "ID,Name,EquipSlotCategory.ID,Stats"
-						},
-						{
-							"key": "limit",
-							"value": "500"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET Item by String",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{host}}/search?string=Augmented%20Radiant%27s%20Earrings%20of%20Aiming&string_algo=fuzzy&indexes=Item",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"search"
-					],
-					"query": [
-						{
-							"key": "string",
-							"value": "Augmented%20Radiant%27s%20Earrings%20of%20Aiming"
-						},
-						{
-							"key": "string_algo",
-							"value": "fuzzy"
-						},
-						{
-							"key": "indexes",
-							"value": "Item"
-						}
-					]
-				}
-			},
-			"response": []
-		},
 		{
 			"name": "GET Item by Id",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/item/35227",
+					"raw": "{{host}}/items/1",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						"item",
-						"35227"
+						"items",
+						"1"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "GET Item by itemlvl 81-90 & class TANK",
+			"name": "GET CharacterProfile By Id",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/search?filters=LevelItem>478,LevelItem<=480&ClassJobCategory.ID=159&page=2",
+					"raw": "{{host}}/profiles/7842416411532806603",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						"search"
-					],
-					"query": [
-						{
-							"key": "filters",
-							"value": "LevelItem>478,LevelItem<=480",
-							"description": "ilvl 479-480"
-						},
-						{
-							"key": "ClassJobCategory.ID",
-							"value": "159",
-							"description": "Magical Ranged DPS"
-						},
-						{
-							"key": "page",
-							"value": "2",
-							"description": "Page"
-						}
+						"profiles",
+						"7842416411532806603"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "GET Item by lvl & class",
+			"name": "POST empty CharacterProfile",
 			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{host}}/search?filters=LevelEquip=90,ClassJobCategory.ID=156",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"search"
-					],
-					"query": [
-						{
-							"key": "filters",
-							"value": "LevelEquip=90,ClassJobCategory.ID=156"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET Item by Job & Lvl",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": ""
+					"raw": "{\r\n    \"characterClass\": \"PALADIN\",\r\n    \"level\": 90\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
 				},
 				"url": {
-					"raw": "{{host}}/search?indexes=Item&filters=ClassJobCategory.ID=66,LevelEquip=90",
+					"raw": "{{host}}/profiles",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						"search"
-					],
-					"query": [
-						{
-							"key": "indexes",
-							"value": "Item"
-						},
-						{
-							"key": "filters",
-							"value": "ClassJobCategory.ID=66,LevelEquip=90"
-						}
+						"profiles"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "GET Item by Class & Equip-Slot & Lvl",
+			"name": "GET GearSet by Id",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/search?indexes=Item&filters=ClassJobCategory.ID=66,EquipSlotCategory.ID=4,LevelEquip=88",
+					"raw": "{{host}}/gearset/4381335562454519277",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						"search"
-					],
-					"query": [
-						{
-							"key": "indexes",
-							"value": "Item"
-						},
-						{
-							"key": "filters",
-							"value": "ClassJobCategory.ID=66,EquipSlotCategory.ID=4,LevelEquip=88"
-						}
+						"gearset",
+						"4381335562454519277"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "GET Item by class",
+			"name": "POST empty GearSet",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"characterLevel\": 90,\r\n    \"gearClass\": \"PALADIN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "{{host}}/search?filters=ClassJobCategory.ID=59",
+					"raw": "{{host}}/gearset",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						"search"
-					],
-					"query": [
-						{
-							"key": "filters",
-							"value": "ClassJobCategory.ID=59"
+						"gearset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST empty GearSet Copy",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"primary\": 1,\r\n    \"secondary\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET Classes",
-			"request": {
-				"method": "GET",
-				"header": [],
+					}
+				},
 				"url": {
-					"raw": "https://staging.xivapi.com/ClassJobCategory",
-					"protocol": "https",
-					"host": [
-						"staging",
-						"xivapi",
-						"com"
-					],
-					"path": [
-						"ClassJobCategory"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET Classes by page",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://staging.xivapi.com/ClassJobCategory?page=2",
-					"protocol": "https",
-					"host": [
-						"staging",
-						"xivapi",
-						"com"
-					],
-					"path": [
-						"ClassJobCategory"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "2"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET ItemSearchCategory - Primary/Secondary/etc.",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://staging.xivapi.com/ItemSearchCategory",
-					"protocol": "https",
-					"host": [
-						"staging",
-						"xivapi",
-						"com"
-					],
-					"path": [
-						"ItemSearchCategory"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET ClassJobCategory - WAR,DRK,etc.",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://staging.xivapi.com/ClassJobCategory",
-					"protocol": "https",
-					"host": [
-						"staging",
-						"xivapi",
-						"com"
-					],
-					"path": [
-						"ClassJobCategory"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET EquipSlotCategory - Legs,Head,Feet",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://staging.xivapi.com/EquipSlotCategory/12",
-					"protocol": "https",
-					"host": [
-						"staging",
-						"xivapi",
-						"com"
-					],
-					"path": [
-						"EquipSlotCategory",
-						"12"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET Character",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{host}}/search?indexes=character",
+					"raw": "{{host}}/gearset/4381335562454519277",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						"search"
-					],
-					"query": [
-						{
-							"key": "indexes",
-							"value": "character"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET Character Copy",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{host}}/character/search?name=a&columns=ID,Character.GearSet",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"character",
-						"search"
-					],
-					"query": [
-						{
-							"key": "name",
-							"value": "a"
-						},
-						{
-							"key": "columns",
-							"value": "ID,Character.GearSet"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET Character Copy 2",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{host}}/character/search?name=a&columns=ID,Character.GearSet",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"character",
-						"search"
-					],
-					"query": [
-						{
-							"key": "name",
-							"value": "a"
-						},
-						{
-							"key": "columns",
-							"value": "ID,Character.GearSet"
-						}
+						"gearset",
+						"4381335562454519277"
 					]
 				}
 			},
@@ -458,7 +163,7 @@
 	"variable": [
 		{
 			"key": "host",
-			"value": "https://staging.xivapi.com",
+			"value": "localhost:8080/api",
 			"type": "string"
 		}
 	]

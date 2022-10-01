@@ -1,6 +1,7 @@
 package com.ccat.equipmentcalculator.model.repository;
 
 import com.ccat.equipmentcalculator.model.Entity.Item;
+import com.ccat.equipmentcalculator.model.Entity.ItemSlot;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -16,17 +17,21 @@ public class ItemDao {
         dupeMap.put("Strength", 100);
         dupeMap.put("Dexterity", 300);
 
-        itemList.add(new Item(0L));
+        itemList.add(new Item(0L, 0));
 
         itemList.add(new Item(1L,
                 "Chicken Tender",
                 90,
+                400,
+                ItemSlot.PRIMARY,
                 statMap));
 
 
         itemList.add(new Item(2L,
                 "Chicken Shield",
                 90,
+                400,
+                ItemSlot.SECONDARY,
                 dupeMap));
     }
 

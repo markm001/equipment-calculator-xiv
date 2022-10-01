@@ -7,16 +7,16 @@ import java.util.List;
 
 public class GearSetResponse {
     private Long id;
-    private int characterLevel;
+    private int itemLevel;
     private List<Item> equippedItems;
 
     //Constructors:
     public GearSetResponse() {
 
     }
-    public GearSetResponse(Long id, int characterLevel, List<Item> equippedItems) {
+    public GearSetResponse(Long id, int itemLevel, List<Item> equippedItems) {
         this.id = id;
-        this.characterLevel = characterLevel;
+        this.itemLevel = itemLevel;
         this.equippedItems = equippedItems;
     }
 
@@ -25,8 +25,8 @@ public class GearSetResponse {
         return id;
     }
 
-    public int getCharacterLevel() {
-        return characterLevel;
+    public int getItemLevel() {
+        return itemLevel;
     }
 
     public List<Item> getEquippedItems() {

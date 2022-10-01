@@ -1,9 +1,6 @@
 package com.ccat.equipmentcalculator.model.repository;
 
-import com.ccat.equipmentcalculator.model.Entity.EquipmentList;
-import com.ccat.equipmentcalculator.model.Entity.GearSet;
-import com.ccat.equipmentcalculator.model.Entity.Item;
-import com.ccat.equipmentcalculator.model.Entity.ItemSlot;
+import com.ccat.equipmentcalculator.model.Entity.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -18,11 +15,9 @@ public class GearSetDao {
     private List<GearSet> gearSetList = new ArrayList<>();
 
     public GearSetDao(ItemDao itemDao) {
-        HashMap<ItemSlot, Item> equipMap = new HashMap<>();
-        equipMap.put(ItemSlot.PRIMARY, itemDao.findById(1L).get());
-
-        gearSetList.add(new GearSet(1L, 90, new EquipmentList()));
-        gearSetList.add(new GearSet(2L, 90, new EquipmentList(1L,2L)));
+        gearSetList.add(new GearSet(0L, CharacterClass.EMPTY, 0, new EquipmentList()));
+        gearSetList.add(new GearSet(1L, CharacterClass.WARRIOR, 0, new EquipmentList()));
+        gearSetList.add(new GearSet(2L, CharacterClass.PALADIN,0, new EquipmentList(1L,2L)));
     }
 
     public GearSet save(GearSet gearSet) {

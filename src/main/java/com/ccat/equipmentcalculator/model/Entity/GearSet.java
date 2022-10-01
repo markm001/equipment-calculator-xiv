@@ -1,11 +1,9 @@
 package com.ccat.equipmentcalculator.model.Entity;
 
-import java.util.HashMap;
-
 public class GearSet {
     private Long id;
-    private int characterLevel;
-
+    private CharacterClass gearClass;
+    private int itemLevel;
     private EquipmentList equippedItems;
 
     //Constructors:
@@ -13,13 +11,10 @@ public class GearSet {
 
     }
 
-    public GearSet(int characterLevel) {
-        this.characterLevel = characterLevel;
-    }
-
-    public GearSet(Long id, int characterLevel, EquipmentList equippedItems) {
+    public GearSet(Long id, CharacterClass gearClass, int itemLevel, EquipmentList equippedItems) {
         this.id = id;
-        this.characterLevel = characterLevel;
+        this.gearClass = gearClass;
+        this.itemLevel = itemLevel;
         this.equippedItems = equippedItems;
     }
 
@@ -28,11 +23,15 @@ public class GearSet {
         return id;
     }
 
-    public int getCharacterLevel() {
-        return characterLevel;
+    public CharacterClass getGearClass() {
+        return gearClass;
     }
 
-    public EquipmentList getEquippedItem() {
+    public int getItemLevel() {
+        return itemLevel;
+    }
+
+    public EquipmentList getEquippedItems() {
         return equippedItems;
     }
 }

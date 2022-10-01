@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.lang.Math.floor;
+
 @Service
 public class GearSetService {
     private GearSetDao gearSetDao;
@@ -29,7 +31,8 @@ public class GearSetService {
 
         GearSet savedGearSet = new GearSet(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
-                gearSetRequest.getCharacterLevel(),
+                gearSetRequest.getGearClass(),
+                0,
                 new EquipmentList());
         gearSetDao.save(savedGearSet);
 
@@ -42,19 +45,16 @@ public class GearSetService {
         if(retrievedSet.isPresent()) {
             GearSet gearSet = retrievedSet.get();
 
-            //retrieve Item responses by Id:
-            Optional<Item> primaryItem = itemDao.findById(gearSet.getEquippedItem().getPrimary());
-            Optional<Item> secondaryItem = itemDao.findById(gearSet.getEquippedItem().getSecondary());
-
-            GearSetResponse gearSetResponse = new GearSetResponse(gearSet.getId(),
-                    gearSet.getCharacterLevel(),
-                    List.of(
-                            primaryItem.orElse(new Item()),
-                            secondaryItem.orElse(new Item())
+                    GearSetResponse gearSetResponse = new GearSetResponse(
+                            gearSet.getId(),
+                            gearSet.getItemLevel(),
+                            List.of(
+                                getItemForId(gearSet.getEquippedItems().getPrimary()),
+                                getItemForId(gearSet.getEquippedItems().getSecondary())
                     ));
 
             // calculate Stats for Set:
-            calculateGearSetStats(gearSetResponse.getEquippedItems());
+            System.out.println(calculateAverageItemLevels(gearSetResponse.getEquippedItems()));
 
             return Optional.of(gearSetResponse);
         }
@@ -64,42 +64,44 @@ public class GearSetService {
     }
 
 
+    //TODO: Embed Items into GearSet instead of Ids - prevent API-Rate-Cap for requesting Data
     public Optional<GearSet> updateGearSetEquipment(Long gearSetId, EquipmentList equipmentList) {
         Optional<GearSet> retrievedSet = gearSetDao.findById(gearSetId);
+
         if(retrievedSet.isPresent()) {
             GearSet retrievedGearSet = retrievedSet.get();
+
+            EquipmentList equipmentListRequest = new EquipmentList(
+                    (equipmentList.getPrimary()!= null)? equipmentList.getPrimary() : retrievedGearSet.getEquippedItems().getPrimary(),
+                    (equipmentList.getSecondary() != null)? equipmentList.getSecondary() : retrievedGearSet.getEquippedItems().getSecondary());
+
+            int calculatedItemLevel = calculateAverageItemLevels(List.of(
+                    getItemForId(equipmentListRequest.getPrimary()),
+                    getItemForId(equipmentListRequest.getSecondary())));
+
             GearSet gearSetRequest = new GearSet(
                     retrievedGearSet.getId(),
-                    retrievedGearSet.getCharacterLevel(),
-                    new EquipmentList(
-                            (equipmentList.getPrimary()!= null)? equipmentList.getPrimary() : retrievedGearSet.getEquippedItem().getPrimary(),
-                            (equipmentList.getSecondary() != null)? equipmentList.getSecondary() : retrievedGearSet.getEquippedItem().getSecondary()
-                    ));
+                    retrievedGearSet.getGearClass(),
+                    calculatedItemLevel,
+                    equipmentListRequest);
 
             return Optional.of(gearSetDao.update(gearSetRequest));
         }
         return Optional.empty();
     }
 
-    private void calculateGearSetStats(List<Item> equippedItems) {
-        //In: HashMap<String, Integer> statMap; "Strength": 100
-        HashMap<String,Integer> combinedStats = new HashMap<>();
-
-        for(Item i : equippedItems) {
-            if(i.getStatMap() == null) return;
-            for (String statKey : i.getStatMap().keySet()) {
-                addStats(combinedStats, statKey, i.getStatMap().get(statKey));
-            }
-        }
-
-        System.out.println(combinedStats);
+    //Calculate average ItemLevels:
+    private int calculateAverageItemLevels(List<Item> equippedItems) {
+        //In: Item -> equippedItems.get(index).getItemLevel()
+        Double averageItemLevels = equippedItems.stream().map(item -> item.getItemLevel())
+                .mapToDouble(n -> n)
+                .average()
+                .orElse(0.0);
+        return (int)floor(averageItemLevels);
     }
 
-    private void addStats(HashMap<String, Integer> statCalc, String statKey, Integer value) {
-        if (statCalc.containsKey(statKey)) {
-            statCalc.put(statKey, statCalc.get(statKey) + value);
-        } else {
-            statCalc.put(statKey, value);
-        }
+    //Get Item for Id:
+    private Item getItemForId(Long itemId) {
+        return itemDao.findById(itemId).orElse(new Item());
     }
 }

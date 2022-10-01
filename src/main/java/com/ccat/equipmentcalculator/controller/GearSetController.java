@@ -23,6 +23,8 @@ public class GearSetController {
         return gearSetService.createEmptyGearSet(gearSetRequest);
     }
 
+    //TODO: Implement PutMapping for adding List of Equipment Ids into EquipmentList(overwrite most recent Item)
+
     @PutMapping("/gearset/{id}")
     public ResponseEntity<GearSet> updateGearSetEquipment(
             @PathVariable(name="id") Long gearSetId,
