@@ -1,19 +1,20 @@
 package com.ccat.equipmentcalculator.model.service;
 
-import com.ccat.equipmentcalculator.model.Entity.EquipmentList;
-import com.ccat.equipmentcalculator.model.Entity.GearSet;
-import com.ccat.equipmentcalculator.model.Entity.Item;
-import com.ccat.equipmentcalculator.model.Entity.ItemSlot;
+import com.ccat.equipmentcalculator.exception.InvalidIdException;
+import com.ccat.equipmentcalculator.exception.InvalidItemSlotException;
 import com.ccat.equipmentcalculator.model.GearSetResponse;
+import com.ccat.equipmentcalculator.model.entity.EquipmentList;
+import com.ccat.equipmentcalculator.model.entity.GearSet;
+import com.ccat.equipmentcalculator.model.entity.Item;
+import com.ccat.equipmentcalculator.model.entity.ItemSlot;
 import com.ccat.equipmentcalculator.model.repository.GearSetDao;
 import com.ccat.equipmentcalculator.model.repository.ItemDao;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static java.lang.Math.floor;
 
@@ -39,69 +40,74 @@ public class GearSetService {
         return savedGearSet;
     }
 
-    public Optional<GearSetResponse> getGearSetById(Long setId) {
-        Optional<GearSet> retrievedSet = gearSetDao.findById(setId);
+    public GearSetResponse getGearSetById(Long setId) {
 
-        if(retrievedSet.isPresent()) {
-            GearSet gearSet = retrievedSet.get();
+        GearSet retrievedSet = gearSetDao.findById(setId)
+                .orElseThrow(new InvalidIdException(
+                        String.format("Gear-Set with requested Id: %d not found", setId), HttpStatus.BAD_REQUEST));
 
-                    GearSetResponse gearSetResponse = new GearSetResponse(
-                            gearSet.getId(),
-                            gearSet.getItemLevel(),
-                            List.of(
-                                getItemForId(gearSet.getEquippedItems().getPrimary()),
-                                getItemForId(gearSet.getEquippedItems().getSecondary())
-                    ));
+        GearSetResponse gearSetResponse = new GearSetResponse(
+                retrievedSet.getId(),
+                retrievedSet.getItemLevel(),
+                itemDao.findByIds(retrievedSet.getEquippedItems().getAllItems())
+        );
 
-            // calculate Stats for Set:
-            System.out.println(calculateAverageItemLevels(gearSetResponse.getEquippedItems()));
+        // calculate Stats for Set:
+        System.out.println(calculateAverageItemLevels(gearSetResponse.getEquippedItems()));
 
-            return Optional.of(gearSetResponse);
-        }
-        else {
-            return Optional.empty();
-        }
+        return gearSetResponse;
     }
 
 
     //TODO: Embed Items into GearSet instead of Ids - prevent API-Rate-Cap for requesting Data
-    public Optional<GearSet> updateGearSetEquipment(Long gearSetId, EquipmentList equipmentList) {
-        Optional<GearSet> retrievedSet = gearSetDao.findById(gearSetId);
+    public GearSet updateGearSetEquipment(Long gearSetId, EquipmentList equipmentList) {
+        GearSet retrievedGearSet = gearSetDao.findById(gearSetId)
+                .orElseThrow(new InvalidIdException(
+                        String.format("Gear-Set with the requested Id: %d not found.",gearSetId),HttpStatus.BAD_REQUEST));
 
-        if(retrievedSet.isPresent()) {
-            GearSet retrievedGearSet = retrievedSet.get();
+        EquipmentList equipmentListRequest = new EquipmentList(
+                (equipmentList.getPrimary()!= null)? equipmentList.getPrimary() : retrievedGearSet.getEquippedItems().getPrimary(),
+                (equipmentList.getSecondary() != null)? equipmentList.getSecondary() : retrievedGearSet.getEquippedItems().getSecondary());
 
-            EquipmentList equipmentListRequest = new EquipmentList(
-                    (equipmentList.getPrimary()!= null)? equipmentList.getPrimary() : retrievedGearSet.getEquippedItems().getPrimary(),
-                    (equipmentList.getSecondary() != null)? equipmentList.getSecondary() : retrievedGearSet.getEquippedItems().getSecondary());
 
-            int calculatedItemLevel = calculateAverageItemLevels(List.of(
-                    getItemForId(equipmentListRequest.getPrimary()),
-                    getItemForId(equipmentListRequest.getSecondary())));
+        List<Item> itemResponseList = new ArrayList<>();
 
-            GearSet gearSetRequest = new GearSet(
-                    retrievedGearSet.getId(),
-                    retrievedGearSet.getGearClass(),
-                    calculatedItemLevel,
-                    equipmentListRequest);
+        //Check if Item is in correct EquipmentList-Slot:
+        for(int i=0; i<ItemSlot.values().length; i++) {
+            Long currentItemIndex = equipmentListRequest.getAllItems().get(i);
+            Item retrievedItem = itemDao.findById(currentItemIndex).orElse(new Item());
+            checkEquipmentSlot(retrievedItem, ItemSlot.values()[i]);
 
-            return Optional.of(gearSetDao.update(gearSetRequest));
+            itemResponseList.add(retrievedItem);
         }
-        return Optional.empty();
+
+        int calculatedItemLevel = calculateAverageItemLevels(itemResponseList);
+
+        GearSet gearSetRequest = new GearSet(
+                retrievedGearSet.getId(),
+                retrievedGearSet.getGearClass(),
+                calculatedItemLevel,
+                equipmentListRequest);
+
+        return gearSetDao.update(gearSetRequest);
     }
 
     //Calculate average ItemLevels:
     private int calculateAverageItemLevels(List<Item> equippedItems) {
         //In: Item -> equippedItems.get(index).getItemLevel()
-        Double averageItemLevels = equippedItems.stream().map(item -> item.getItemLevel())
+        double averageItemLevels = equippedItems.stream().map(item -> item.getItemLevel())
                 .mapToDouble(n -> n)
                 .average()
                 .orElse(0.0);
         return (int)floor(averageItemLevels);
     }
 
-    //Get Item for Id:
-    private Item getItemForId(Long itemId) {
-        return itemDao.findById(itemId).orElse(new Item());
+    private boolean checkEquipmentSlot(Item item, ItemSlot itemSlot) {
+        if ((item.getItemSlot() == itemSlot) || item.getItemSlot() == null) {
+            return true;
+        } else throw new InvalidItemSlotException(
+                String.format("Item with Id:%d and ItemSlot:%s cannot be equipped in the requested %s Slot.",
+                        item.getId(), item.getItemSlot(), itemSlot.toString()),
+                HttpStatus.BAD_REQUEST);
     }
 }

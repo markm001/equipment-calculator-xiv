@@ -1,13 +1,9 @@
 package com.ccat.equipmentcalculator.controller;
 
-import com.ccat.equipmentcalculator.model.Entity.CharacterClass;
-import com.ccat.equipmentcalculator.model.Entity.CharacterProfile;
-import com.ccat.equipmentcalculator.model.repository.CharacterProfileDao;
+import com.ccat.equipmentcalculator.model.CharacterProfileResponse;
+import com.ccat.equipmentcalculator.model.entity.CharacterProfile;
 import com.ccat.equipmentcalculator.model.service.CharacterProfileService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 public class CharacterProfileController {
@@ -18,13 +14,8 @@ public class CharacterProfileController {
     }
 
     @RequestMapping("/profiles/{id}")
-    public CharacterProfile getCharacterProfileById(@PathVariable(name="id") Long characterId) {
-        CharacterProfile characterProfile = characterProfileService.getCharacterProfileById(characterId);
-        return new CharacterProfile(characterProfile.getId(),
-                characterProfile.getCharacterClass(),
-                characterProfile.getLevel(),
-                characterProfile.getGearSetId(),
-                characterProfile.getStatBlock());
+    public CharacterProfileResponse getCharacterProfileById(@PathVariable(name="id") Long characterId) {
+        return characterProfileService.getCharacterProfileById(characterId);
     }
 
     @PostMapping("/profiles")

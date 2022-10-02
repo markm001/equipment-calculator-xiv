@@ -1,7 +1,6 @@
 package com.ccat.equipmentcalculator.model;
 
-import com.ccat.equipmentcalculator.model.Entity.EquipmentList;
-import com.ccat.equipmentcalculator.model.Entity.Item;
+import com.ccat.equipmentcalculator.model.entity.Item;
 
 import java.util.List;
 

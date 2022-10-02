@@ -1,7 +1,7 @@
 package com.ccat.equipmentcalculator.model.repository;
 
-import com.ccat.equipmentcalculator.model.Entity.Item;
-import com.ccat.equipmentcalculator.model.Entity.ItemSlot;
+import com.ccat.equipmentcalculator.model.entity.Item;
+import com.ccat.equipmentcalculator.model.entity.ItemSlot;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -42,7 +42,6 @@ public class ItemDao {
 
     public List<Item> findByIds(List<Long> itemIds) {
         return itemList.stream()
-                .distinct()
                 .filter(i -> itemIds.contains(i.getId()))
                 .collect(Collectors.toList());
     }

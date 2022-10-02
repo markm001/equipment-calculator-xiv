@@ -1,6 +1,6 @@
 package com.ccat.equipmentcalculator.controller;
 
-import com.ccat.equipmentcalculator.model.Entity.Item;
+import com.ccat.equipmentcalculator.model.entity.Item;
 import com.ccat.equipmentcalculator.model.repository.ItemDao;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 

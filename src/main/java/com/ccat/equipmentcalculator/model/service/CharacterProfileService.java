@@ -1,21 +1,17 @@
 package com.ccat.equipmentcalculator.model.service;
 
 import com.ccat.equipmentcalculator.exception.InvalidIdException;
-import com.ccat.equipmentcalculator.model.Entity.CharacterClass;
-import com.ccat.equipmentcalculator.model.Entity.CharacterProfile;
-import com.ccat.equipmentcalculator.model.Entity.GearSet;
-import com.ccat.equipmentcalculator.model.Entity.Item;
+import com.ccat.equipmentcalculator.model.CharacterProfileResponse;
 import com.ccat.equipmentcalculator.model.GearSetResponse;
+import com.ccat.equipmentcalculator.model.entity.CharacterProfile;
+import com.ccat.equipmentcalculator.model.entity.Item;
 import com.ccat.equipmentcalculator.model.repository.CharacterProfileDao;
-import com.ccat.equipmentcalculator.model.repository.GearSetDao;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 @Service
 public class CharacterProfileService {
@@ -27,10 +23,19 @@ public class CharacterProfileService {
         this.gearSetService = gearSetService;
     }
 
-    public CharacterProfile getCharacterProfileById(Long characterId) {
-        return characterProfileDao.findById(characterId)
+    public CharacterProfileResponse getCharacterProfileById(Long characterId) {
+        CharacterProfile profileResponse = characterProfileDao.findById(characterId)
                 .orElseThrow(new InvalidIdException(
                         String.format("No profile with the Id: %d was found", characterId), HttpStatus.BAD_REQUEST));
+
+        GearSetResponse gearSetResponse = gearSetService.getGearSetById(profileResponse.getGearSetId());
+
+        return new CharacterProfileResponse(
+                profileResponse.getId(),
+                profileResponse.getCharacterClass(),
+                profileResponse.getLevel(),
+                gearSetResponse,
+                calculateProfileStatBlock(gearSetResponse.getEquippedItems()));
     }
 
     public CharacterProfile createCharacterProfileWithClassAndLevel(CharacterProfile characterProfileRequest) {
@@ -64,9 +69,10 @@ public class CharacterProfileService {
         HashMap<String,Integer> combinedStats = new HashMap<>();
 
         for(Item i : equippedItems) {
-            if(i.getStatMap() == null) return combinedStats;
-            for (String statKey : i.getStatMap().keySet()) {
-                addStats(combinedStats, statKey, i.getStatMap().get(statKey));
+            if(i.getStatMap() != null) {
+                for (String statKey : i.getStatMap().keySet()) {
+                    addStats(combinedStats, statKey, i.getStatMap().get(statKey));
+                }
             }
         }
 

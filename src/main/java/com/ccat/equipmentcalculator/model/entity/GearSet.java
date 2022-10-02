@@ -1,4 +1,4 @@
-package com.ccat.equipmentcalculator.model.Entity;
+package com.ccat.equipmentcalculator.model.entity;
 
 public class GearSet {
     private Long id;

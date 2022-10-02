@@ -1,8 +1,6 @@
 package com.ccat.equipmentcalculator.model.repository;
 
-import com.ccat.equipmentcalculator.exception.InvalidIdException;
-import com.ccat.equipmentcalculator.model.Entity.CharacterProfile;
-import org.springframework.http.HttpStatus;
+import com.ccat.equipmentcalculator.model.entity.CharacterProfile;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;

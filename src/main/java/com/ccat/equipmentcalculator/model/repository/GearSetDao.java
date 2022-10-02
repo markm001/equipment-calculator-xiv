@@ -1,14 +1,12 @@
 package com.ccat.equipmentcalculator.model.repository;
 
-import com.ccat.equipmentcalculator.model.Entity.*;
+import com.ccat.equipmentcalculator.model.entity.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Repository
 public class GearSetDao {

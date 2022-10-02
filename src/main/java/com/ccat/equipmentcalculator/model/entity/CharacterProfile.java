@@ -1,4 +1,4 @@
-package com.ccat.equipmentcalculator.model.Entity;
+package com.ccat.equipmentcalculator.model.entity;
 
 import java.util.HashMap;
 

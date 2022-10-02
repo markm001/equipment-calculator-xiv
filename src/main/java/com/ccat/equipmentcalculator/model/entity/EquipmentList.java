@@ -1,4 +1,7 @@
-package com.ccat.equipmentcalculator.model.Entity;
+package com.ccat.equipmentcalculator.model.entity;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class EquipmentList {
     //Takes Item Ids:
@@ -21,5 +24,11 @@ public class EquipmentList {
 
     public Long getSecondary() {
         return secondary;
+    }
+
+    public List<Long> getAllItems() {
+        return List.of(
+                (primary!=null)?primary: 0,
+                (secondary!=null)?secondary: 0);
     }
 }

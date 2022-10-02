@@ -1,14 +1,10 @@
 package com.ccat.equipmentcalculator.controller;
 
-import com.ccat.equipmentcalculator.model.Entity.EquipmentList;
-import com.ccat.equipmentcalculator.model.Entity.GearSet;
+import com.ccat.equipmentcalculator.model.entity.EquipmentList;
+import com.ccat.equipmentcalculator.model.entity.GearSet;
 import com.ccat.equipmentcalculator.model.GearSetResponse;
-import com.ccat.equipmentcalculator.model.repository.GearSetDao;
 import com.ccat.equipmentcalculator.model.service.GearSetService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 public class GearSetController {
