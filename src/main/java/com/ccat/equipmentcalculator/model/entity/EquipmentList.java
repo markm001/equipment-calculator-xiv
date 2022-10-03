@@ -31,4 +31,22 @@ public class EquipmentList {
                 (primary!=null)?primary: 0,
                 (secondary!=null)?secondary: 0);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EquipmentList that = (EquipmentList) o;
+
+        if (primary != null ? !primary.equals(that.primary) : that.primary != null) return false;
+        return secondary != null ? secondary.equals(that.secondary) : that.secondary == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = primary != null ? primary.hashCode() : 0;
+        result = 31 * result + (secondary != null ? secondary.hashCode() : 0);
+        return result;
+    }
 }

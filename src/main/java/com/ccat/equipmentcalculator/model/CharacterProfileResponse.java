@@ -1,6 +1,7 @@
 package com.ccat.equipmentcalculator.model;
 
 import com.ccat.equipmentcalculator.model.entity.CharacterClass;
+import com.ccat.equipmentcalculator.model.entity.StatBlock;
 
 import java.util.HashMap;
 
@@ -9,14 +10,14 @@ public class CharacterProfileResponse {
     CharacterClass characterClass;
     int level;
     GearSetResponse gearSetResponse;
-    HashMap<String, Integer> statBlock;
+    StatBlock statBlock;
 
     //Constructors:
     public CharacterProfileResponse() {
 
     }
 
-    public CharacterProfileResponse(Long id, CharacterClass characterClass, int level, GearSetResponse gearSetResponse, HashMap<String, Integer> statBlock) {
+    public CharacterProfileResponse(Long id, CharacterClass characterClass, int level, GearSetResponse gearSetResponse, StatBlock statBlock) {
         this.id = id;
         this.characterClass = characterClass;
         this.level = level;
@@ -41,7 +42,7 @@ public class CharacterProfileResponse {
         return gearSetResponse;
     }
 
-    public HashMap<String, Integer> getStatBlock() {
+    public StatBlock getStatBlock() {
         return statBlock;
     }
 }

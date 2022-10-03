@@ -5,6 +5,7 @@ import com.ccat.equipmentcalculator.model.CharacterProfileResponse;
 import com.ccat.equipmentcalculator.model.GearSetResponse;
 import com.ccat.equipmentcalculator.model.entity.CharacterProfile;
 import com.ccat.equipmentcalculator.model.entity.Item;
+import com.ccat.equipmentcalculator.model.entity.StatBlock;
 import com.ccat.equipmentcalculator.model.repository.CharacterProfileDao;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class CharacterProfileService {
                 characterProfileRequest.getCharacterClass(),
                 characterProfileRequest.getLevel(),
                 0L,
-                new HashMap<>()));
+                new StatBlock()));
     }
 
     public CharacterProfile updateCharacterProfileGearSet(Long profileId, CharacterProfile characterProfileRequest) {
@@ -55,16 +56,17 @@ public class CharacterProfileService {
 
         GearSetResponse gearSetResponse = gearSetService.getGearSetById(characterProfileRequest.getGearSetId());
 
+
             return characterProfileDao.update(new CharacterProfile(
                     retrievedProfile.getId(),
-                    retrievedProfile.getCharacterClass(),
+                    gearSetResponse.getGearClass(),
                     retrievedProfile.getLevel(),
                     gearSetResponse.getId(),
                     calculateProfileStatBlock(gearSetResponse.getEquippedItems())));
     }
 
     //Calculate StatBlock:
-    private HashMap<String, Integer> calculateProfileStatBlock(List<Item> equippedItems) {
+    public StatBlock calculateProfileStatBlock(List<Item> equippedItems) {
         //In: HashMap<String, Integer> statMap; "Strength": 100
         HashMap<String,Integer> combinedStats = new HashMap<>();
 
@@ -76,7 +78,10 @@ public class CharacterProfileService {
             }
         }
 
-        return combinedStats;
+        return new StatBlock(
+                combinedStats.getOrDefault("Strength", 0),
+                combinedStats.getOrDefault("Dexterity", 0),
+                combinedStats.getOrDefault("Mind", 0));
     }
 
     private void addStats(HashMap<String, Integer> statCalc, String statKey, Integer value) {

@@ -48,6 +48,7 @@ public class GearSetService {
 
         GearSetResponse gearSetResponse = new GearSetResponse(
                 retrievedSet.getId(),
+                retrievedSet.getGearClass(),
                 retrievedSet.getItemLevel(),
                 itemDao.findByIds(retrievedSet.getEquippedItems().getAllItems())
         );

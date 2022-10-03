@@ -8,8 +8,7 @@ public class CharacterProfile {
     int level;
     Long gearSetId;
 
-    //TODO: Replace with StatBlock Class
-    HashMap<String, Integer> statBlock;
+    StatBlock statBlock;
 
     public CharacterProfile() {
 
@@ -24,7 +23,7 @@ public class CharacterProfile {
         this.gearSetId = gearSetId;
     }
 
-    public CharacterProfile(Long id, CharacterClass characterClass, int level, Long gearSetId, HashMap<String, Integer> statBlock) {
+    public CharacterProfile(Long id, CharacterClass characterClass, int level, Long gearSetId, StatBlock statBlock) {
         this.id = id;
         this.characterClass = characterClass;
         this.level = level;
@@ -48,7 +47,7 @@ public class CharacterProfile {
         return gearSetId;
     }
 
-    public HashMap<String, Integer> getStatBlock() {
+    public StatBlock getStatBlock() {
         return statBlock;
     }
 }
