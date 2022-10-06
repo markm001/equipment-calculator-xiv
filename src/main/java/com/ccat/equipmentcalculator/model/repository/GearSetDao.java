@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -13,9 +14,18 @@ public class GearSetDao {
     private List<GearSet> gearSetList = new ArrayList<>();
 
     public GearSetDao(ItemDao itemDao) {
-        gearSetList.add(new GearSet(0L, CharacterClass.EMPTY, 0, new EquipmentList()));
-        gearSetList.add(new GearSet(1L, CharacterClass.WARRIOR, 0, new EquipmentList()));
-        gearSetList.add(new GearSet(2L, CharacterClass.PALADIN,0, new EquipmentList(1L,2L)));
+        gearSetList.add(new GearSet(1L,1L,CharacterClass.PALADIN,List.of()));
+        gearSetList.add(new GearSet(2L, 1L, CharacterClass.PALADIN,
+                List.of(
+                        new GearItems(
+                                UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+                                ItemSlot.PRIMARY,
+                                1L),
+                        new GearItems(
+                                UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+                                ItemSlot.SECONDARY,
+                                2L)
+                )));
     }
 
     public GearSet save(GearSet gearSet) {
@@ -34,5 +44,11 @@ public class GearSetDao {
                 .map(s -> s.getId().equals(gearSetRequest.getId())? gearSetRequest: s)
                 .collect(Collectors.toList());
         return gearSetRequest;
+    }
+
+    public List<GearSet> findByProfileId(Long profileId) {
+        return gearSetList.stream()
+                .filter(s -> s.getProfileId().equals(profileId))
+                .collect(Collectors.toList());
     }
 }

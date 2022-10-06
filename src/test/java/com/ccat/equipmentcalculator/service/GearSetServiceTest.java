@@ -1,7 +1,6 @@
 package com.ccat.equipmentcalculator.service;
 
 import com.ccat.equipmentcalculator.exception.InvalidItemSlotException;
-import com.ccat.equipmentcalculator.model.GearSetResponse;
 import com.ccat.equipmentcalculator.model.entity.*;
 import com.ccat.equipmentcalculator.model.repository.GearSetDao;
 import com.ccat.equipmentcalculator.model.repository.ItemDao;
@@ -40,10 +39,18 @@ public class GearSetServiceTest {
         Item primaryItem = getTestItem(ItemSlot.PRIMARY);
         Item secondaryItem = getTestItem(ItemSlot.SECONDARY);
 
-        EquipmentList equipmentList = new EquipmentList(
-                secondaryItem.getId(),
-                primaryItem.getId());
-        GearSet gearSet = getGearSet(equipmentList);
+        List<GearItems> gearItems = List.of(
+                new GearItems(
+                        UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+                        ItemSlot.PRIMARY,
+                        secondaryItem.getId()),
+                new GearItems(
+                        UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+                        ItemSlot.PRIMARY,
+                        secondaryItem.getId())
+        );
+
+        GearSet gearSet = getGearSet(gearItems);
 
         given(itemDao.findById(primaryItem.getId())).willReturn(Optional.of(primaryItem));
         given(itemDao.findById(secondaryItem.getId())).willReturn(Optional.of(secondaryItem));
@@ -52,7 +59,7 @@ public class GearSetServiceTest {
         //then
         assertThrows(InvalidItemSlotException.class, () -> {
             //when
-            service.updateGearSetEquipment(gearSet.getId(),equipmentList);
+            service.updateGearSetEquipment(gearSet.getId(), gearItems);
         });
     }
 
@@ -65,11 +72,12 @@ public class GearSetServiceTest {
                 new HashMap<>());
     }
 
-    private GearSet getGearSet(EquipmentList equipmentList) {
+    private GearSet getGearSet(List<GearItems> gearItems) {
         return new GearSet(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+                1L,
                 CharacterClass.PALADIN,
                 400,
-                equipmentList);
+                gearItems);
     }
 }

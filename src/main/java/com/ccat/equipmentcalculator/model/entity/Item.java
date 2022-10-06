@@ -1,5 +1,8 @@
 package com.ccat.equipmentcalculator.model.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import java.util.HashMap;
 
 public class Item {
@@ -7,6 +10,7 @@ public class Item {
     private String name;
     private int level;
     private int itemLevel;
+
     private ItemSlot itemSlot;
 
     //e.g. "Strength": 500
@@ -15,11 +19,6 @@ public class Item {
     //Constructors:
     public Item() {
 
-    }
-    //TODO: REMOVE LATER - Empty-Item
-    public Item(Long id, int itemLevel) {
-        this.id = id;
-        this.itemLevel = itemLevel;
     }
 
     public Item(Long id, String name, int level, int itemLevel, ItemSlot itemSlot, HashMap<String, Integer> statMap) {

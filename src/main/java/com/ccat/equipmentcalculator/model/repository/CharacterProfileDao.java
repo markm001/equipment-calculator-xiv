@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 @Repository
 public class CharacterProfileDao {
     List<CharacterProfile> characterProfileList = new ArrayList<>();
+
     public Optional<CharacterProfile> findById(Long characterId) {
         return  characterProfileList.stream()
                 .filter(cp -> cp.getId().equals(characterId))

@@ -1,6 +1,7 @@
 package com.ccat.equipmentcalculator.controller;
 
 import com.ccat.equipmentcalculator.model.CharacterProfileResponse;
+import com.ccat.equipmentcalculator.model.entity.CharacterClass;
 import com.ccat.equipmentcalculator.model.entity.CharacterProfile;
 import com.ccat.equipmentcalculator.model.service.CharacterProfileService;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +26,9 @@ public class CharacterProfileController {
     }
 
     @PutMapping("/profiles/{id}")
-    public CharacterProfile updateCharacterProfileWithGearSetId(
+    public CharacterProfile updateCharacterProfileWithClassAndLevel(
             @PathVariable(name="id") Long profileId,
-            @RequestBody CharacterProfile characterProfileRequest) {
-        return characterProfileService.updateCharacterProfileGearSet(profileId,characterProfileRequest);
+            @RequestBody CharacterProfile profileRequest) {
+        return characterProfileService.updateCharacterProfile(profileId, profileRequest);
     }
 }

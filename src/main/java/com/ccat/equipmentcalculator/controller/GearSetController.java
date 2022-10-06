@@ -1,10 +1,13 @@
 package com.ccat.equipmentcalculator.controller;
 
-import com.ccat.equipmentcalculator.model.entity.EquipmentList;
+import com.ccat.equipmentcalculator.model.entity.GearItems;
 import com.ccat.equipmentcalculator.model.entity.GearSet;
 import com.ccat.equipmentcalculator.model.GearSetResponse;
 import com.ccat.equipmentcalculator.model.service.GearSetService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class GearSetController {
@@ -14,26 +17,27 @@ public class GearSetController {
         this.gearSetService = gearSetService;
     }
 
-    @PostMapping("/gearset")
+    @PostMapping("/gearsets")
     public GearSet createEmptyGearSet(@RequestBody GearSet gearSetRequest) {
         return gearSetService.createEmptyGearSet(gearSetRequest);
     }
 
-    //TODO: Implement PutMapping for adding List of Equipment Ids into EquipmentList(overwrite most recent Item)
-
-    @PutMapping("/gearset/{id}")
-    public GearSet updateGearSetEquipment(
+    @PutMapping("/gearsets/{id}/items")
+    public GearSetResponse updateGearSetEquipmentWithListOfGearItems(
             @PathVariable(name="id") Long gearSetId,
-            @RequestBody EquipmentList equipmentList) {
-        GearSet gearSetResponse = gearSetService.updateGearSetEquipment(gearSetId, equipmentList);
-        return new GearSet(
-                gearSetResponse.getId(),
-                gearSetResponse.getGearClass(),
-                gearSetResponse.getItemLevel(),
-                gearSetResponse.getEquippedItems());
+            @RequestBody List<GearItems> gearItems) {
+        return gearSetService.updateGearSetEquipment(gearSetId, gearItems);
     }
 
-    @RequestMapping("/gearset/{id}")
+    @DeleteMapping("/gearsets/{id}/items")
+    public ResponseEntity<Object> deleteGearSetEquipmentWithListOfItemIds(
+            @PathVariable(name="id") Long gearSetId,
+            @RequestBody List<Long> itemIdRequest) {
+        gearSetService.deleteGearSetEquipment(gearSetId, itemIdRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping("/gearsets/{id}")
     public GearSetResponse getGearSetById(@PathVariable(name="id") Long setId) {
         return gearSetService.getGearSetById(setId);
     }

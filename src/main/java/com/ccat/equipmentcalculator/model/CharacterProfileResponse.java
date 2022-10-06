@@ -4,12 +4,13 @@ import com.ccat.equipmentcalculator.model.entity.CharacterClass;
 import com.ccat.equipmentcalculator.model.entity.StatBlock;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class CharacterProfileResponse {
     Long id;
     CharacterClass characterClass;
     int level;
-    GearSetResponse gearSetResponse;
+    List<GearSetResponse> gearSetResponse;
     StatBlock statBlock;
 
     //Constructors:
@@ -17,7 +18,7 @@ public class CharacterProfileResponse {
 
     }
 
-    public CharacterProfileResponse(Long id, CharacterClass characterClass, int level, GearSetResponse gearSetResponse, StatBlock statBlock) {
+    public CharacterProfileResponse(Long id, CharacterClass characterClass, int level, List<GearSetResponse> gearSetResponse, StatBlock statBlock) {
         this.id = id;
         this.characterClass = characterClass;
         this.level = level;
@@ -38,7 +39,7 @@ public class CharacterProfileResponse {
         return level;
     }
 
-    public GearSetResponse getGearSetResponse() {
+    public List<GearSetResponse> getGearSetResponse() {
         return gearSetResponse;
     }
 

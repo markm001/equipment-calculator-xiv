@@ -24,45 +24,55 @@ public class CharacterProfileService {
         this.gearSetService = gearSetService;
     }
 
-    public CharacterProfileResponse getCharacterProfileById(Long characterId) {
-        CharacterProfile profileResponse = characterProfileDao.findById(characterId)
-                .orElseThrow(new InvalidIdException(
-                        String.format("No profile with the Id: %d was found", characterId), HttpStatus.BAD_REQUEST));
-
-        GearSetResponse gearSetResponse = gearSetService.getGearSetById(profileResponse.getGearSetId());
-
-        return new CharacterProfileResponse(
-                profileResponse.getId(),
-                profileResponse.getCharacterClass(),
-                profileResponse.getLevel(),
-                gearSetResponse,
-                calculateProfileStatBlock(gearSetResponse.getEquippedItems()));
-    }
-
     public CharacterProfile createCharacterProfileWithClassAndLevel(CharacterProfile characterProfileRequest) {
         return characterProfileDao.save(new CharacterProfile(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
                 characterProfileRequest.getCharacterClass(),
                 characterProfileRequest.getLevel(),
-                0L,
                 new StatBlock()));
     }
 
-    public CharacterProfile updateCharacterProfileGearSet(Long profileId, CharacterProfile characterProfileRequest) {
-        CharacterProfile retrievedProfile = characterProfileDao.findById(profileId).orElseThrow(
-                new InvalidIdException(
-                        String.format("A Profile with the requested Id: %d doesn't exist.",profileId)
-                        , HttpStatus.BAD_REQUEST));
+    public CharacterProfile updateCharacterProfile(Long profileId, CharacterProfile profileRequest) {
+        CharacterProfile retrievedProfile = retrieveCharacterProfile(profileId);
 
-        GearSetResponse gearSetResponse = gearSetService.getGearSetById(characterProfileRequest.getGearSetId());
+        CharacterProfile updatedProfile = new CharacterProfile(retrievedProfile.getId(),
+                profileRequest.getCharacterClass(),
+                profileRequest.getLevel(),
+                new StatBlock()
+        );
+
+        return characterProfileDao.update(updatedProfile);
+    }
+
+    private CharacterProfile retrieveCharacterProfile(Long profileId) {
+        return characterProfileDao.findById(profileId)
+                .orElseThrow(
+                        new InvalidIdException(String.format("Profile with Id:%d does not exist.", profileId),
+                                HttpStatus.BAD_REQUEST));
+    }
 
 
-            return characterProfileDao.update(new CharacterProfile(
-                    retrievedProfile.getId(),
-                    gearSetResponse.getGearClass(),
-                    retrievedProfile.getLevel(),
-                    gearSetResponse.getId(),
-                    calculateProfileStatBlock(gearSetResponse.getEquippedItems())));
+    public CharacterProfileResponse getCharacterProfileById(Long profileId) {
+
+        CharacterProfile retrievedProfile = retrieveCharacterProfile(profileId);
+
+        List<GearSetResponse> retrievedGearSets = gearSetService.getGearSetsForProfileId(retrievedProfile.getId());
+
+        //Calculate StatBlock for specified Class (if nonexistent class is specified - calculate Empty Stats):
+        StatBlock profileStatBlock = calculateProfileStatBlock(retrievedGearSets.stream()
+                .filter(gS -> gS.getGearClass().equals(retrievedProfile.getCharacterClass()))
+                .findFirst()
+                .map(GearSetResponse::getEquippedItems)
+                .orElse(List.of())
+        );
+
+        return new CharacterProfileResponse(
+                retrievedProfile.getId(),
+                retrievedProfile.getCharacterClass(),
+                retrievedProfile.getLevel(),
+                retrievedGearSets,
+                profileStatBlock
+                );
     }
 
     //Calculate StatBlock:

@@ -1,20 +1,25 @@
 package com.ccat.equipmentcalculator.model.entity;
 
+import java.util.List;
+
 public class GearSet {
     private Long id;
+
+    private Long profileId;
+
+    // extracted from Profile
     private CharacterClass gearClass;
-    private int itemLevel;
-    private EquipmentList equippedItems;
+
+    private List<GearItems> equippedItems;
 
     //Constructors:
     public GearSet() {
 
     }
-
-    public GearSet(Long id, CharacterClass gearClass, int itemLevel, EquipmentList equippedItems) {
+    public GearSet(Long id, Long profileId, CharacterClass gearClass, List<GearItems> equippedItems) {
         this.id = id;
+        this.profileId = profileId;
         this.gearClass = gearClass;
-        this.itemLevel = itemLevel;
         this.equippedItems = equippedItems;
     }
 
@@ -23,37 +28,15 @@ public class GearSet {
         return id;
     }
 
+    public Long getProfileId() {
+        return profileId;
+    }
+
     public CharacterClass getGearClass() {
         return gearClass;
     }
 
-    public int getItemLevel() {
-        return itemLevel;
-    }
-
-    public EquipmentList getEquippedItems() {
+    public List<GearItems> getEquippedItems() {
         return equippedItems;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        GearSet gearSet = (GearSet) o;
-
-        if (itemLevel != gearSet.itemLevel) return false;
-        if (!id.equals(gearSet.id)) return false;
-        if (gearClass != gearSet.gearClass) return false;
-        return equippedItems.equals(gearSet.equippedItems);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + gearClass.hashCode();
-        result = 31 * result + itemLevel;
-        result = 31 * result + equippedItems.hashCode();
-        return result;
     }
 }

@@ -1,5 +1,6 @@
 package com.ccat.equipmentcalculator.model.repository;
 
+import com.ccat.equipmentcalculator.model.entity.CharacterClass;
 import com.ccat.equipmentcalculator.model.entity.Item;
 import com.ccat.equipmentcalculator.model.entity.ItemSlot;
 import org.springframework.stereotype.Repository;
@@ -17,8 +18,6 @@ public class ItemDao {
         statMap.put("Strength", 100);
         dupeMap.put("Strength", 100);
         dupeMap.put("Dexterity", 300);
-
-        itemList.add(new Item(0L, 0));
 
         itemList.add(new Item(1L,
                 "Chicken Tender",
@@ -45,5 +44,4 @@ public class ItemDao {
                 .filter(i -> itemIds.contains(i.getId()))
                 .collect(Collectors.toList());
     }
-
 }
