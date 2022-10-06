@@ -1,15 +1,22 @@
 package com.ccat.equipmentcalculator.model.entity;
 
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
+@Table(name="gearsets")
 public class GearSet {
+    @Id
     private Long id;
 
     private Long profileId;
 
-    // extracted from Profile
+    @Enumerated(EnumType.STRING)
     private CharacterClass gearClass;
 
+    @ElementCollection
+    @CollectionTable(name="GEARSET_ITEMS",
+        joinColumns={@JoinColumn(name="gearsetId", referencedColumnName="ID")})
     private List<GearItems> equippedItems;
 
     //Constructors:

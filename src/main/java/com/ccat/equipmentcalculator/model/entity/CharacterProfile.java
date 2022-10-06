@@ -1,12 +1,18 @@
 package com.ccat.equipmentcalculator.model.entity;
 
-import java.util.HashMap;
+import javax.persistence.*;
 
+@Entity
+@Table(name="profiles")
 public class CharacterProfile {
+    @Id
     Long id;
+
+    @Enumerated(EnumType.STRING)
     CharacterClass characterClass;
     int level;
 
+    @Transient
     StatBlock statBlock;
 
     //Constructors:

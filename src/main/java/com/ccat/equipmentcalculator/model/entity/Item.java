@@ -1,20 +1,24 @@
 package com.ccat.equipmentcalculator.model.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.HashMap;
 
+
+@Entity
+@Table(name="items_tmp")
 public class Item {
+    @Id
     private Long id;
     private String name;
     private int level;
     private int itemLevel;
 
+    @Enumerated(EnumType.STRING)
     private ItemSlot itemSlot;
 
-    //e.g. "Strength": 500
+    @Transient
     private HashMap<String, Integer> statMap;
+    //e.g. "Strength": 500
 
     //Constructors:
     public Item() {

@@ -1,5 +1,8 @@
 package com.ccat.equipmentcalculator.model.entity;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class GearItems {
     private Long id;
     private ItemSlot itemSlot;
