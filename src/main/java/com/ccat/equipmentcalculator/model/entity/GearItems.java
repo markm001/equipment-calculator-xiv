@@ -1,5 +1,7 @@
 package com.ccat.equipmentcalculator.model.entity;
 
+import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
+
 import javax.persistence.Embeddable;
 
 @Embeddable

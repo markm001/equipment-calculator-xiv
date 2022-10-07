@@ -1,6 +1,8 @@
 package com.ccat.equipmentcalculator.model.repository;
 
 import com.ccat.equipmentcalculator.model.entity.*;
+import com.ccat.equipmentcalculator.model.entity.enums.CharacterClass;
+import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -14,7 +16,7 @@ public class GearSetDao {
     private List<GearSet> gearSetList = new ArrayList<>();
 
     public GearSetDao(ItemDao itemDao) {
-        gearSetList.add(new GearSet(1L,1L,CharacterClass.PALADIN,List.of()));
+        gearSetList.add(new GearSet(1L,1L, CharacterClass.PALADIN,List.of()));
         gearSetList.add(new GearSet(2L, 1L, CharacterClass.PALADIN,
                 List.of(
                         new GearItems(

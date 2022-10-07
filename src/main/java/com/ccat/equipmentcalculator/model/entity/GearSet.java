@@ -1,5 +1,7 @@
 package com.ccat.equipmentcalculator.model.entity;
 
+import com.ccat.equipmentcalculator.model.entity.enums.CharacterClass;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,6 +24,9 @@ public class GearSet {
     //Constructors:
     public GearSet() {
 
+    }
+    public GearSet(Long id) {
+        this.id = id;
     }
     public GearSet(Long id, Long profileId, CharacterClass gearClass, List<GearItems> equippedItems) {
         this.id = id;

@@ -1,8 +1,8 @@
 package com.ccat.equipmentcalculator.model.repository;
 
-import com.ccat.equipmentcalculator.model.entity.CharacterClass;
 import com.ccat.equipmentcalculator.model.entity.Item;
-import com.ccat.equipmentcalculator.model.entity.ItemSlot;
+import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
+import com.ccat.equipmentcalculator.model.entity.enums.ClassJobCategory;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -24,6 +24,7 @@ public class ItemDao {
                 90,
                 400,
                 ItemSlot.PRIMARY,
+                Set.of(ClassJobCategory.PLD),
                 statMap));
 
 
@@ -32,7 +33,16 @@ public class ItemDao {
                 90,
                 400,
                 ItemSlot.SECONDARY,
+                Set.of(ClassJobCategory.PLD),
                 dupeMap));
+
+        itemList.add(new Item(3L,
+                "Multi-Equip Item",
+                90,
+                300,
+                ItemSlot.PRIMARY,
+                Set.of(ClassJobCategory.PLD, ClassJobCategory.WAR),
+                statMap));
     }
 
     public Optional<Item> findById(Long itemId) {
@@ -42,6 +52,12 @@ public class ItemDao {
     public List<Item> findByIds(List<Long> itemIds) {
         return itemList.stream()
                 .filter(i -> itemIds.contains(i.getId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Item> findByCategoryAndLevel(ClassJobCategory category, int level) {
+        return itemList.stream()
+                .filter(i -> i.getJobCategories().contains(category) && i.getLevel() == level)
                 .collect(Collectors.toList());
     }
 }

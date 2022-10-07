@@ -1,14 +1,14 @@
 package com.ccat.equipmentcalculator.model.service;
 
 import com.ccat.equipmentcalculator.exception.InvalidIdException;
-import com.ccat.equipmentcalculator.exception.InvalidItemSlotException;
 import com.ccat.equipmentcalculator.model.GearSetResponse;
 import com.ccat.equipmentcalculator.model.entity.GearItems;
 import com.ccat.equipmentcalculator.model.entity.GearSet;
 import com.ccat.equipmentcalculator.model.entity.Item;
-import com.ccat.equipmentcalculator.model.entity.ItemSlot;
+import com.ccat.equipmentcalculator.model.entity.enums.CharacterClass;
+import com.ccat.equipmentcalculator.model.entity.enums.ClassJobCategory;
+import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
 import com.ccat.equipmentcalculator.model.repository.GearSetDao;
-import com.ccat.equipmentcalculator.model.repository.ItemDao;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +20,16 @@ import static java.lang.Math.floor;
 @Service
 public class GearSetService {
     private GearSetDao gearSetDao;
-    private ItemDao itemDao;
+    private ItemService itemService;
 
-    public GearSetService(GearSetDao gearSetDao, ItemDao itemDao) {
+    private HashMap<CharacterClass, ClassJobCategory> comparisonMap = new HashMap<>();
+
+    public GearSetService(GearSetDao gearSetDao, ItemService itemService) {
         this.gearSetDao = gearSetDao;
-        this.itemDao = itemDao;
+        this.itemService = itemService;
+
+        comparisonMap.put(CharacterClass.PALADIN, ClassJobCategory.PLD);
+        comparisonMap.put(CharacterClass.WARRIOR, ClassJobCategory.WAR);
     }
 
     public GearSet createEmptyGearSet(GearSet gearSetRequest) {
@@ -48,7 +53,7 @@ public class GearSetService {
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
 
-        List<Item> retrievedItems = itemDao.findByIds(itemIds);
+        List<Item> retrievedItems = itemService.getItemsByIds(itemIds);
 
         Map<ItemSlot, Item> itemSlotMap = new HashMap<>();
         for(ItemSlot slot : ItemSlot.values()) {
@@ -79,13 +84,13 @@ public class GearSetService {
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
 
-        List<Item> savedItems = itemDao.findByIds(savedItemIds);
+        List<Item> savedItems = itemService.getItemsByIds(savedItemIds);
 
         // check ItemList validity:
         List<Long> itemIdList = gearItems.stream()
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
-        List<Item> retrievedList = itemDao.findByIds(itemIdList);
+        List<Item> retrievedList = itemService.getItemsByIds(savedItemIds);
 
         //TODO: implement ClassJobCategory for Item-Entity constraint  {
         // || check only ItemList for Job -> throw: InvalidItemId Exception (better!) }
@@ -172,10 +177,21 @@ public class GearSetService {
                 .collect(Collectors.toList());
     }
 
+    public List<Item> getItemsByGearSetClassAndLevel(Long gearSetId, int level) {
+        GearSet retrievedGearSet = gearSetDao.findById(gearSetId)
+                .orElseThrow(new InvalidIdException(
+                        String.format("GearSet with Id:%d not found.",gearSetId),HttpStatus.BAD_REQUEST));
+
+        CharacterClass desiredGearClass = retrievedGearSet.getGearClass();
+
+        // translate GearClass Name to ClassJobCategory abbreviation:
+        return itemService.getItemsByCategoryAndLevel(comparisonMap.get(desiredGearClass), level);
+    }
+
     private List<Item> mapGearItemsToItemIds(List<GearItems> gearItems) {
         List<Long> itemIds = gearItems.stream()
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
-        return itemDao.findByIds(itemIds);
+        return itemService.getItemsByIds(itemIds);
     }
 }

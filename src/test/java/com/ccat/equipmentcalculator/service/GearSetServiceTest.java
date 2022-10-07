@@ -2,16 +2,16 @@ package com.ccat.equipmentcalculator.service;
 
 import com.ccat.equipmentcalculator.exception.InvalidItemSlotException;
 import com.ccat.equipmentcalculator.model.entity.*;
+import com.ccat.equipmentcalculator.model.entity.enums.CharacterClass;
+import com.ccat.equipmentcalculator.model.entity.enums.ClassJobCategory;
+import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
 import com.ccat.equipmentcalculator.model.repository.GearSetDao;
-import com.ccat.equipmentcalculator.model.repository.ItemDao;
 import com.ccat.equipmentcalculator.model.service.GearSetService;
+import com.ccat.equipmentcalculator.model.service.ItemService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,15 +21,15 @@ import static org.mockito.Mockito.mock;
 public class GearSetServiceTest {
     private GearSetService service;
     private GearSetDao gearSetDao;
-    private ItemDao itemDao;
+    private ItemService itemService;
 
     @BeforeEach
     public void init() {
-        this.itemDao = mock(ItemDao.class);
+        this.itemService = mock(ItemService.class);
         this.gearSetDao = mock(GearSetDao.class);
         this.service = new GearSetService(
                 gearSetDao,
-                itemDao
+                itemService
         );
     }
 
@@ -52,8 +52,8 @@ public class GearSetServiceTest {
 
         GearSet gearSet = getGearSet(gearItems);
 
-        given(itemDao.findById(primaryItem.getId())).willReturn(Optional.of(primaryItem));
-        given(itemDao.findById(secondaryItem.getId())).willReturn(Optional.of(secondaryItem));
+        given(itemService.getItemById(primaryItem.getId())).willReturn(Optional.of(primaryItem));
+        given(itemService.getItemById(secondaryItem.getId())).willReturn(Optional.of(secondaryItem));
         given(gearSetDao.findById(gearSet.getId())).willReturn(Optional.of(gearSet));
 
         //then
@@ -69,6 +69,7 @@ public class GearSetServiceTest {
                 90,
                 400,
                 itemSlot,
+                Set.of(ClassJobCategory.PLD),
                 new HashMap<>());
     }
 
@@ -77,7 +78,6 @@ public class GearSetServiceTest {
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
                 1L,
                 CharacterClass.PALADIN,
-                400,
                 gearItems);
     }
 }

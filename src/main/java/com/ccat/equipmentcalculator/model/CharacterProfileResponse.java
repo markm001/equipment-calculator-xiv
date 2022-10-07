@@ -1,9 +1,8 @@
 package com.ccat.equipmentcalculator.model;
 
-import com.ccat.equipmentcalculator.model.entity.CharacterClass;
+import com.ccat.equipmentcalculator.model.entity.enums.CharacterClass;
 import com.ccat.equipmentcalculator.model.entity.StatBlock;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class CharacterProfileResponse {

@@ -1,5 +1,6 @@
 package com.ccat.equipmentcalculator.controller;
 
+import com.ccat.equipmentcalculator.model.entity.GearSet;
 import com.ccat.equipmentcalculator.model.entity.Item;
 import com.ccat.equipmentcalculator.model.repository.ItemDao;
 import org.springframework.http.ResponseEntity;

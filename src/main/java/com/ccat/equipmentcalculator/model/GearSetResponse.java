@@ -1,6 +1,6 @@
 package com.ccat.equipmentcalculator.model;
 
-import com.ccat.equipmentcalculator.model.entity.CharacterClass;
+import com.ccat.equipmentcalculator.model.entity.enums.CharacterClass;
 import com.ccat.equipmentcalculator.model.entity.Item;
 
 import java.util.List;

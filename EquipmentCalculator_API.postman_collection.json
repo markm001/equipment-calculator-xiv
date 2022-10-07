@@ -25,18 +25,47 @@
 			"response": []
 		},
 		{
+			"name": "GET Item with List<Id>",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[1,2]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/items",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "GET CharacterProfile By Id",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/profiles/7842416411532806603",
+					"raw": "{{host}}/profiles/4672535249397500236",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"profiles",
-						"7842416411532806603"
+						"4672535249397500236"
 					]
 				}
 			},
@@ -49,7 +78,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"characterClass\": \"PALADIN\",\r\n    \"level\": 90\r\n}",
+					"raw": "{\r\n    \"characterClass\": \"WARRIOR\",\r\n    \"level\": 90\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -69,18 +98,65 @@
 			"response": []
 		},
 		{
+			"name": "GET CharacterProfile By Id Copy",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"characterClass\": \"PALADIN\",\r\n    \"level\": 90\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/profiles/4672535249397500236",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"profiles",
+						"4672535249397500236"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "GET GearSet by Id",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/gearset/4381335562454519277",
+					"raw": "{{host}}/gearsets/2828284150113062136",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						"gearset",
-						"4381335562454519277"
+						"gearsets",
+						"2828284150113062136"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Items fit for GearSetId & Level",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/gearsets/2828284150113062136/items/90",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"gearsets",
+						"2828284150113062136",
+						"items",
+						"90"
 					]
 				}
 			},
@@ -101,25 +177,25 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/gearset",
+					"raw": "{{host}}/gearsets",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						"gearset"
+						"gearsets"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "POST empty GearSet Copy",
+			"name": "Update GearSet with ItemIds",
 			"request": {
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"primary\": 1,\r\n    \"secondary\": 2\r\n}",
+					"raw": "[\r\n    {\r\n        \"itemSlot\":\"SECONDARY\",\r\n        \"itemId\":2\r\n    }\r\n]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -127,13 +203,42 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/gearset/4381335562454519277",
+					"raw": "{{host}}/gearsets/2828284150113062136/items",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
-						"gearset",
-						"4381335562454519277"
+						"gearsets",
+						"2828284150113062136",
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE GearSet Items",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[ 1, 2 ]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/gearsets/2828284150113062136/items",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"gearsets",
+						"2828284150113062136",
+						"items"
 					]
 				}
 			},

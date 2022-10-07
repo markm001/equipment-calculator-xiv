@@ -3,7 +3,9 @@ package com.ccat.equipmentcalculator.controller;
 import com.ccat.equipmentcalculator.model.entity.GearItems;
 import com.ccat.equipmentcalculator.model.entity.GearSet;
 import com.ccat.equipmentcalculator.model.GearSetResponse;
+import com.ccat.equipmentcalculator.model.entity.Item;
 import com.ccat.equipmentcalculator.model.service.GearSetService;
+import com.ccat.equipmentcalculator.model.service.ItemService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +15,7 @@ import java.util.List;
 public class GearSetController {
     private final GearSetService gearSetService;
 
-    public GearSetController(GearSetService gearSetService) {
+    public GearSetController(GearSetService gearSetService, ItemService itemService) {
         this.gearSetService = gearSetService;
     }
 
@@ -40,5 +42,12 @@ public class GearSetController {
     @RequestMapping("/gearsets/{id}")
     public GearSetResponse getGearSetById(@PathVariable(name="id") Long setId) {
         return gearSetService.getGearSetById(setId);
+    }
+
+    @RequestMapping("/gearsets/{id}/items/{level}")
+    public List<Item> getItemsForGearSetIdAndLevel(
+            @PathVariable(name="id") Long setId,
+            @PathVariable(name="level") int level) {
+        return gearSetService.getItemsByGearSetClassAndLevel(setId, level);
     }
 }

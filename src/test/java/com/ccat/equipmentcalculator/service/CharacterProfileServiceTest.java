@@ -1,8 +1,9 @@
 package com.ccat.equipmentcalculator.service;
 
 import com.ccat.equipmentcalculator.model.entity.Item;
-import com.ccat.equipmentcalculator.model.entity.ItemSlot;
+import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
 import com.ccat.equipmentcalculator.model.entity.StatBlock;
+import com.ccat.equipmentcalculator.model.entity.enums.ClassJobCategory;
 import com.ccat.equipmentcalculator.model.repository.CharacterProfileDao;
 import com.ccat.equipmentcalculator.model.service.CharacterProfileService;
 import com.ccat.equipmentcalculator.model.service.GearSetService;
@@ -99,6 +100,7 @@ public class CharacterProfileServiceTest {
                 90,
                 400,
                 ItemSlot.SECONDARY,
+                Set.of(ClassJobCategory.PLD),
                 (HashMap<String, Integer>)statMap);
     }
 }

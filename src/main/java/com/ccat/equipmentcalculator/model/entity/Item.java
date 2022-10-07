@@ -1,7 +1,11 @@
 package com.ccat.equipmentcalculator.model.entity;
 
+import com.ccat.equipmentcalculator.model.entity.enums.ClassJobCategory;
+import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
+
 import javax.persistence.*;
 import java.util.HashMap;
+import java.util.Set;
 
 
 @Entity
@@ -16,6 +20,10 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private ItemSlot itemSlot;
 
+    @ElementCollection(targetClass = ClassJobCategory.class)
+    @Enumerated(EnumType.STRING)
+    private Set<ClassJobCategory> jobCategories;
+
     @Transient
     private HashMap<String, Integer> statMap;
     //e.g. "Strength": 500
@@ -25,12 +33,13 @@ public class Item {
 
     }
 
-    public Item(Long id, String name, int level, int itemLevel, ItemSlot itemSlot, HashMap<String, Integer> statMap) {
+    public Item(Long id, String name, int level, int itemLevel, ItemSlot itemSlot, Set<ClassJobCategory> jobCategories, HashMap<String, Integer> statMap) {
         this.id = id;
         this.name = name;
         this.level = level;
         this.itemLevel = itemLevel;
         this.itemSlot = itemSlot;
+        this.jobCategories = jobCategories;
         this.statMap = statMap;
     }
 
@@ -53,6 +62,10 @@ public class Item {
 
     public ItemSlot getItemSlot() {
         return itemSlot;
+    }
+
+    public Set<ClassJobCategory> getJobCategories() {
+        return jobCategories;
     }
 
     public HashMap<String, Integer> getStatMap() {

@@ -1,7 +1,6 @@
 package com.ccat.equipmentcalculator.controller;
 
 import com.ccat.equipmentcalculator.model.CharacterProfileResponse;
-import com.ccat.equipmentcalculator.model.entity.CharacterClass;
 import com.ccat.equipmentcalculator.model.entity.CharacterProfile;
 import com.ccat.equipmentcalculator.model.service.CharacterProfileService;
 import org.springframework.web.bind.annotation.*;
