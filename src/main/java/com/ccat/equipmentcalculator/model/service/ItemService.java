@@ -11,7 +11,7 @@ import java.util.Optional;
 @Service
 public class ItemService {
 
-    private ItemDao itemDao;
+    private final ItemDao itemDao;
 
     public ItemService(ItemDao itemDao) {
         this.itemDao = itemDao;

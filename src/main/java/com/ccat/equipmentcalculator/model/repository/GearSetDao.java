@@ -3,6 +3,8 @@ package com.ccat.equipmentcalculator.model.repository;
 import com.ccat.equipmentcalculator.model.entity.*;
 import com.ccat.equipmentcalculator.model.entity.enums.CharacterClass;
 import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -12,45 +14,48 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
-public class GearSetDao {
-    private List<GearSet> gearSetList = new ArrayList<>();
-
-    public GearSetDao(ItemDao itemDao) {
-        gearSetList.add(new GearSet(1L,1L, CharacterClass.PALADIN,List.of()));
-        gearSetList.add(new GearSet(2L, 1L, CharacterClass.PALADIN,
-                List.of(
-                        new GearItems(
-                                UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
-                                ItemSlot.PRIMARY,
-                                1L),
-                        new GearItems(
-                                UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
-                                ItemSlot.SECONDARY,
-                                2L)
-                )));
-    }
-
-    public GearSet save(GearSet gearSet) {
-        gearSetList.add(gearSet);
-        return gearSet;
-    }
-
-    public Optional<GearSet> findById(Long setId) {
-        return gearSetList.stream()
-                .filter(gs -> gs.getId().equals(setId))
-                .findFirst();
-    }
-
-    public GearSet update(GearSet gearSetRequest) {
-        gearSetList = gearSetList.stream()
-                .map(s -> s.getId().equals(gearSetRequest.getId())? gearSetRequest: s)
-                .collect(Collectors.toList());
-        return gearSetRequest;
-    }
-
-    public List<GearSet> findByProfileId(Long profileId) {
-        return gearSetList.stream()
-                .filter(s -> s.getProfileId().equals(profileId))
-                .collect(Collectors.toList());
-    }
+public interface GearSetDao extends JpaRepository<GearSet, Long> {
+    @Query(value = "SELECT s FROM GearSet s WHERE profileId =:profileId")
+    List<GearSet> findByProfileId(Long profileId);
 }
+//    private List<GearSet> gearSetList = new ArrayList<>();
+//
+//    public GearSetDao(ItemDao itemDao) {
+//        gearSetList.add(new GearSet(1L,1L, CharacterClass.PALADIN,List.of()));
+//        gearSetList.add(new GearSet(2L, 1L, CharacterClass.PALADIN,
+//                List.of(
+//                        new GearItems(
+//                                UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+//                                ItemSlot.PRIMARY,
+//                                1L),
+//                        new GearItems(
+//                                UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+//                                ItemSlot.SECONDARY,
+//                                2L)
+//                )));
+//    }
+//
+//    public GearSet save(GearSet gearSet) {
+//        gearSetList.add(gearSet);
+//        return gearSet;
+//    }
+//
+//    public Optional<GearSet> findById(Long setId) {
+//        return gearSetList.stream()
+//                .filter(gs -> gs.getId().equals(setId))
+//                .findFirst();
+//    }
+//
+//    public GearSet update(GearSet gearSetRequest) {
+//        gearSetList = gearSetList.stream()
+//                .map(s -> s.getId().equals(gearSetRequest.getId())? gearSetRequest: s)
+//                .collect(Collectors.toList());
+//        return gearSetRequest;
+//    }
+//
+//    public List<GearSet> findByProfileId(Long profileId) {
+//        return gearSetList.stream()
+//                .filter(s -> s.getProfileId().equals(profileId))
+//                .collect(Collectors.toList());
+//    }
+//}

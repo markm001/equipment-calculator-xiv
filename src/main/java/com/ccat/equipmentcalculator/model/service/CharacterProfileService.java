@@ -41,7 +41,7 @@ public class CharacterProfileService {
                 new StatBlock()
         );
 
-        return characterProfileDao.update(updatedProfile);
+        return characterProfileDao.save(updatedProfile);
     }
 
     private CharacterProfile retrieveCharacterProfile(Long profileId) {

@@ -6,7 +6,6 @@ import com.ccat.equipmentcalculator.model.entity.GearItems;
 import com.ccat.equipmentcalculator.model.entity.GearSet;
 import com.ccat.equipmentcalculator.model.entity.Item;
 import com.ccat.equipmentcalculator.model.entity.enums.CharacterClass;
-import com.ccat.equipmentcalculator.model.entity.enums.ClassJobCategory;
 import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
 import com.ccat.equipmentcalculator.model.repository.GearSetDao;
 import org.springframework.http.HttpStatus;
@@ -19,17 +18,12 @@ import static java.lang.Math.floor;
 
 @Service
 public class GearSetService {
-    private GearSetDao gearSetDao;
-    private ItemService itemService;
-
-    private HashMap<CharacterClass, ClassJobCategory> comparisonMap = new HashMap<>();
+    private final GearSetDao gearSetDao;
+    private final ItemService itemService;
 
     public GearSetService(GearSetDao gearSetDao, ItemService itemService) {
         this.gearSetDao = gearSetDao;
         this.itemService = itemService;
-
-        comparisonMap.put(CharacterClass.PALADIN, ClassJobCategory.PLD);
-        comparisonMap.put(CharacterClass.WARRIOR, ClassJobCategory.WAR);
     }
 
     public GearSet createEmptyGearSet(GearSet gearSetRequest) {
@@ -90,16 +84,14 @@ public class GearSetService {
         List<Long> itemIdList = gearItems.stream()
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
-        List<Item> retrievedList = itemService.getItemsByIds(savedItemIds);
-
-        //TODO: implement ClassJobCategory for Item-Entity constraint  {
-        // || check only ItemList for Job -> throw: InvalidItemId Exception (better!) }
+        List<Item> retrievedList = itemService.getItemsByIds(itemIdList);
 
         HashMap<ItemSlot, Item> validSlotItems = new HashMap<>();
         //check Item Slots:
         for(ItemSlot slot : ItemSlot.values()) {
             Item slotItem = retrievedList.stream()
-                    .filter(i -> i.getItemSlot().equals(slot))
+                    // Check Slot & Class for Item
+                    .filter(i -> i.getItemSlot().equals(slot) && i.getJobCategories().contains(retrievedSet.getGearClass().getAbbreviation()))
                     .findFirst()
                     .orElse(
                             savedItems.stream()
@@ -118,7 +110,7 @@ public class GearSetService {
                         sI.getId()))
                 .collect(Collectors.toList());
 
-        gearSetDao.update(new GearSet(
+        gearSetDao.save(new GearSet(
                 retrievedSet.getId(),
                 retrievedSet.getProfileId(),
                 retrievedSet.getGearClass(),
@@ -139,7 +131,7 @@ public class GearSetService {
                 .filter(gI -> !itemIdRequest.contains(gI.getItemId()))
                 .collect(Collectors.toList());
 
-        gearSetDao.update(new GearSet(
+        gearSetDao.save(new GearSet(
                 retrievedSet.getId(),
                 retrievedSet.getProfileId(),
                 retrievedSet.getGearClass(),
@@ -184,8 +176,7 @@ public class GearSetService {
 
         CharacterClass desiredGearClass = retrievedGearSet.getGearClass();
 
-        // translate GearClass Name to ClassJobCategory abbreviation:
-        return itemService.getItemsByCategoryAndLevel(comparisonMap.get(desiredGearClass), level);
+        return itemService.getItemsByCategoryAndLevel(desiredGearClass.getAbbreviation(), level);
     }
 
     private List<Item> mapGearItemsToItemIds(List<GearItems> gearItems) {
