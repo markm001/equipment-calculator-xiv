@@ -5,6 +5,7 @@ import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
 
 import javax.persistence.*;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -24,8 +25,12 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private Set<ClassJobCategory> jobCategories;
 
-    @Transient
-    private HashMap<String, Integer> statMap;
+    @ElementCollection
+    @CollectionTable(name="STAT_VALUE_MAPPING",
+        joinColumns = {@JoinColumn(name="item_id", referencedColumnName="id")})
+    @MapKeyColumn(name="stat_name")
+    @Column(name="stat_value")
+    private Map<String, Integer> statMap;
     //e.g. "Strength": 500
 
     //Constructors:
@@ -68,7 +73,35 @@ public class Item {
         return jobCategories;
     }
 
-    public HashMap<String, Integer> getStatMap() {
+    public Map<String, Integer> getStatMap() {
         return statMap;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Item item = (Item) o;
+
+        if (level != item.level) return false;
+        if (itemLevel != item.itemLevel) return false;
+        if (!id.equals(item.id)) return false;
+        if (!name.equals(item.name)) return false;
+        if (itemSlot != item.itemSlot) return false;
+        if (!jobCategories.equals(item.jobCategories)) return false;
+        return statMap.equals(item.statMap);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + level;
+        result = 31 * result + itemLevel;
+        result = 31 * result + itemSlot.hashCode();
+        result = 31 * result + jobCategories.hashCode();
+        result = 31 * result + statMap.hashCode();
+        return result;
     }
 }

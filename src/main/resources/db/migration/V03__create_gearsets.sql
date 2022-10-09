@@ -22,7 +22,9 @@ alter table gearsets
    references profiles (id);
 
 
-#remove and replace with Client later:
+
+
+
 
 alter table gearset_items
    add constraint gearset_items_item_id_fk

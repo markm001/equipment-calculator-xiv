@@ -51,4 +51,36 @@ public class GearSet {
     public List<GearItems> getEquippedItems() {
         return equippedItems;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GearSet gearSet = (GearSet) o;
+
+        if (!id.equals(gearSet.id)) return false;
+        if (!profileId.equals(gearSet.profileId)) return false;
+        if (gearClass != gearSet.gearClass) return false;
+        return equippedItems.equals(gearSet.equippedItems);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + profileId.hashCode();
+        result = 31 * result + gearClass.hashCode();
+        result = 31 * result + equippedItems.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "GearSet{" +
+                "id=" + id +
+                ", profileId=" + profileId +
+                ", gearClass=" + gearClass +
+                ", equippedItems=" + equippedItems +
+                '}';
+    }
 }

@@ -33,4 +33,24 @@ public class GearItems {
     public ItemSlot getItemSlot() {
         return itemSlot;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GearItems gearItems = (GearItems) o;
+
+        if (!id.equals(gearItems.id)) return false;
+        if (itemSlot != gearItems.itemSlot) return false;
+        return itemId.equals(gearItems.itemId);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + itemSlot.hashCode();
+        result = 31 * result + itemId.hashCode();
+        return result;
+    }
 }
