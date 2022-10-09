@@ -1,11 +1,16 @@
 package com.ccat.equipmentcalculator.service;
 
 import com.ccat.equipmentcalculator.exception.InvalidItemSlotException;
-import com.ccat.equipmentcalculator.model.entity.*;
+import com.ccat.equipmentcalculator.exception.InvalidJobClassException;
+import com.ccat.equipmentcalculator.model.GearSetResponse;
+import com.ccat.equipmentcalculator.model.entity.GearItems;
+import com.ccat.equipmentcalculator.model.entity.GearSet;
+import com.ccat.equipmentcalculator.model.entity.Item;
 import com.ccat.equipmentcalculator.model.entity.enums.CharacterClass;
 import com.ccat.equipmentcalculator.model.entity.enums.ClassJobCategory;
 import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
 import com.ccat.equipmentcalculator.model.repository.GearSetDao;
+import com.ccat.equipmentcalculator.model.repository.ItemDao;
 import com.ccat.equipmentcalculator.model.service.GearSetService;
 import com.ccat.equipmentcalculator.model.service.ItemService;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,62 +27,111 @@ public class GearSetServiceTest {
     private GearSetService service;
     private GearSetDao gearSetDao;
     private ItemService itemService;
+    private ItemDao itemDao;
 
     @BeforeEach
     public void init() {
-        this.itemService = mock(ItemService.class);
         this.gearSetDao = mock(GearSetDao.class);
-        this.service = new GearSetService(
-                gearSetDao,
-                itemService
-        );
+        this.itemDao = mock(ItemDao.class);
+        this.itemService = new ItemService(itemDao);
+        this.service = new GearSetService(gearSetDao, itemService);
     }
 
     @Test
-    public void test_updateGearSetWithIncorrectItemSlotItem_throwInvalidItemSlotException() {
+    public void test_updateGearSet_returnGearSetResponse() {
         //given
-        Item primaryItem = getTestItem(ItemSlot.PRIMARY);
-        Item secondaryItem = getTestItem(ItemSlot.SECONDARY);
+        GearSet emptyGearSet = generateGearSet(CharacterClass.PALADIN);
+        Item item = generateItem(ItemSlot.PRIMARY,Set.of(ClassJobCategory.PLD));
+        GearItems e1 = generateGearItemsFromItem(ItemSlot.PRIMARY, item);
+        List<GearItems> newGearItemList = List.of(e1);
 
-        List<GearItems> gearItems = List.of(
-                new GearItems(
-                        UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
-                        ItemSlot.PRIMARY,
-                        secondaryItem.getId()),
-                new GearItems(
-                        UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
-                        ItemSlot.PRIMARY,
-                        secondaryItem.getId())
-        );
+        given(gearSetDao.findById(emptyGearSet.getId())).willReturn(Optional.of(emptyGearSet));
+        given(itemDao.findByIds(List.of(item.getId()))).willReturn(List.of(item));
 
-        GearSet gearSet = getGearSet(gearItems);
+        int itemLevel = item.getItemLevel() / ItemSlot.values().length;
 
-        given(itemService.getItemById(primaryItem.getId())).willReturn(Optional.of(primaryItem));
-        given(itemService.getItemById(secondaryItem.getId())).willReturn(Optional.of(secondaryItem));
-        given(gearSetDao.findById(gearSet.getId())).willReturn(Optional.of(gearSet));
+        GearSetResponse controlResponse = new GearSetResponse(
+                emptyGearSet.getId(),
+                emptyGearSet.getGearClass(),
+                itemLevel,
+                List.of(item));
+        //when
+        GearSetResponse setResponse = service.updateGearSetEquipment(emptyGearSet.getId(), newGearItemList);
+
+        //then
+        assertThat(setResponse).isEqualTo(controlResponse);
+    }
+
+    @Test
+    public void test_updateGearSetWithIncorrectItemSlot_throwsInvalidItemSlotException() {
+        //given
+        ItemSlot slotToEquipItem = ItemSlot.SECONDARY;
+
+        GearSet emptyGearSet = generateGearSet(CharacterClass.PALADIN);
+        Item item = generateItem(ItemSlot.PRIMARY,Set.of(ClassJobCategory.PLD));
+        GearItems e1 = generateGearItemsFromItem(slotToEquipItem, item);
+        List<GearItems> newGearItemList = List.of(e1);
+
+        given(gearSetDao.findById(emptyGearSet.getId())).willReturn(Optional.of(emptyGearSet));
+        given(itemDao.findByIds(List.of(item.getId()))).willReturn(List.of(item));
 
         //then
         assertThrows(InvalidItemSlotException.class, () -> {
             //when
-            service.updateGearSetEquipment(gearSet.getId(), gearItems);
+            service.updateGearSetEquipment(emptyGearSet.getId(), newGearItemList);
         });
     }
 
-    private Item getTestItem(ItemSlot itemSlot) {
-        return new Item(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
-                "TestItem",
+    @Test
+    public void test_updateGearSetWithMultipleItemsAndOneIncorrectItemJobClass_throwsInvalidJobClassException() {
+        //given
+        ClassJobCategory itemClassJobCategory = ClassJobCategory.RDM;
+        CharacterClass gearSetJobCategory = CharacterClass.PALADIN;
+
+        GearSet emptyGearSet = generateGearSet(gearSetJobCategory);
+        Item item = generateItem(ItemSlot.PRIMARY, Set.of(ClassJobCategory.PLD));
+        Item item2 = generateItem(ItemSlot.SECONDARY, Set.of(itemClassJobCategory));
+
+        GearItems e1 = generateGearItemsFromItem(ItemSlot.PRIMARY, item);
+        GearItems e2 = generateGearItemsFromItem(ItemSlot.SECONDARY, item2);
+
+        List<GearItems> newGearItemList = List.of(e1,e2);
+        List<Long> itemIds = List.of(item.getId(), item2.getId());
+
+        given(gearSetDao.findById(emptyGearSet.getId())).willReturn(Optional.of(emptyGearSet));
+        given(itemDao.findByIds(itemIds)).willReturn(List.of(item, item2));
+
+        //then
+        assertThrows(InvalidJobClassException.class, () -> {
+            //when
+            service.updateGearSetEquipment(emptyGearSet.getId(), newGearItemList);
+        });
+    }
+
+    private GearItems generateGearItemsFromItem(ItemSlot secondary, Item item2) {
+        return new GearItems(
+                UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
+                secondary,
+                item2.getId());
+    }
+
+    private Item generateItem(ItemSlot itemSlot, Set<ClassJobCategory> jobClass) {
+        return new Item(
+                UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
+                "R_N",
                 90,
                 400,
                 itemSlot,
-                Set.of(ClassJobCategory.PLD),
+                jobClass,
                 new HashMap<>());
     }
 
-    private GearSet getGearSet(List<GearItems> gearItems) {
-        return new GearSet(
+    private GearSet generateGearSet(CharacterClass characterClass) {
+        GearSet emptyGearSet = new GearSet(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
-                1L,
-                CharacterClass.PALADIN,
-                gearItems);
+                UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+                characterClass,
+                List.of(new GearItems()));
+        return emptyGearSet;
     }
 }

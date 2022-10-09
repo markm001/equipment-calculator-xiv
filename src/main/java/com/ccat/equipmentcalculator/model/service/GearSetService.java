@@ -1,6 +1,8 @@
 package com.ccat.equipmentcalculator.model.service;
 
 import com.ccat.equipmentcalculator.exception.InvalidIdException;
+import com.ccat.equipmentcalculator.exception.InvalidItemSlotException;
+import com.ccat.equipmentcalculator.exception.InvalidJobClassException;
 import com.ccat.equipmentcalculator.model.GearSetResponse;
 import com.ccat.equipmentcalculator.model.entity.GearItems;
 import com.ccat.equipmentcalculator.model.entity.GearSet;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.Math.floor;
 
@@ -69,59 +72,86 @@ public class GearSetService {
         );
     }
 
-    public GearSetResponse updateGearSetEquipment(Long gearSetId, List<GearItems> gearItems) {
+    public GearSetResponse updateGearSetEquipment(Long gearSetId, List<GearItems> gearItemsRequest) {
         // check GearSet validity:
         GearSet retrievedSet = retrieveGearSetById(gearSetId);
-
-        // retrieved GearSet Items:
-        List<Long> savedItemIds = retrievedSet.getEquippedItems().stream()
+        // get currently equipped GearSet Items:
+        List<Long> oldItemIdsRequest = retrievedSet.getEquippedItems().stream()
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
+        List<Item> oldItemList = itemService.getItemsByIds(oldItemIdsRequest);
 
-        List<Item> savedItems = itemService.getItemsByIds(savedItemIds);
-
-        // check ItemList validity:
-        List<Long> itemIdList = gearItems.stream()
+        // get requested Items via Ids:
+        List<Long> itemIdsRequest = gearItemsRequest.stream()
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
-        List<Item> retrievedList = itemService.getItemsByIds(itemIdList);
+        List<Item> newItemList = itemService.getItemsByIds(itemIdsRequest);
 
-        HashMap<ItemSlot, Item> validSlotItems = new HashMap<>();
-        //check Item Slots:
+        // compare request slots to actual item-slot & job-class and actual item-class:
+        gearItemsRequest
+                .forEach(gI -> {
+                    Item item = newItemList.stream()
+                            .filter(i -> i.getId().equals(gI.getItemId())).findFirst().get();
+                    if(!item.getItemSlot().equals(gI.getItemSlot())) {
+                        throw new InvalidItemSlotException(
+                                String.format("Item with Id:%d and Slot:%s cannot be equipped into Slot:%s",item.getId(),item.getItemSlot(),gI.getItemSlot()),
+                                HttpStatus.BAD_REQUEST);
+                    }
+                    if(!item.getJobCategories().contains(retrievedSet.getGearClass().getAbbreviation())) {
+                        throw new InvalidJobClassException(
+                                String.format("Item with Id:%d and Job-Class:%s cannot be equipped to Job-Class:%s",
+                                        item.getId(), item.getJobCategories(),retrievedSet.getGearClass().getAbbreviation()),
+                                HttpStatus.BAD_REQUEST);
+                    }
+                });
+
+        // all newItem-Slots:
+        List<ItemSlot> slotsToWrite = gearItemsRequest.stream()
+                .map(GearItems::getItemSlot)
+                .collect(Collectors.toList());
+        // check if oldItem-slot conflicts with newItem-slots
+        List<Item> cleanItemList = oldItemList.stream()
+                .filter(i -> !(slotsToWrite.contains(i.getItemSlot())))
+                .collect(Collectors.toList());
+
+        // join CleanedItems + NewItems
+        List<Item> itemListRequest = Stream.concat(cleanItemList.stream(), newItemList.stream())
+                .collect(Collectors.toList());
+
+        // compile Slot-Map - Item or empty Item
+        Map<ItemSlot, Item> itemSlotMap = new HashMap<>();
         for(ItemSlot slot : ItemSlot.values()) {
-            Item slotItem = retrievedList.stream()
-                    // Check Slot & Class for Item
-                    .filter(i -> i.getItemSlot().equals(slot) && i.getJobCategories().contains(retrievedSet.getGearClass().getAbbreviation()))
+            Item item = itemListRequest.stream()
+                    .filter(i -> i.getItemSlot().equals(slot))
                     .findFirst()
-                    .orElse(
-                            savedItems.stream()
-                                    .filter(i -> i.getItemSlot().equals(slot)).findFirst()
-                                    .orElse(new Item())); //fill slot with Empty
-            validSlotItems.put(slot, slotItem);
+                    .orElse(new Item());
+            itemSlotMap.put(slot, item);
         }
 
-        List<Item> slotMapItems = new ArrayList<>(validSlotItems.values());
-        int averageItemLevel = calculateAverageItemLevels(slotMapItems);
+        // Calculate average Item-Level for all Items:
+        List<Item> allSlotItems = new ArrayList<>(itemSlotMap.values());
+        int averageItemLevel = calculateAverageItemLevels(allSlotItems);
 
-        List<GearItems> gearItemList = slotMapItems.stream()
-                .map(sI -> new GearItems(
-                        UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
-                        sI.getItemSlot(),
-                        sI.getId()))
+        // compile GearSet for Items:
+        List<GearItems> gearItemsRequestList = itemListRequest.stream()
+                .map(i -> new GearItems(
+                        UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
+                        i.getItemSlot(),
+                        i.getId()))
                 .collect(Collectors.toList());
 
+        // save new GearSet:
         gearSetDao.save(new GearSet(
                 retrievedSet.getId(),
                 retrievedSet.getProfileId(),
                 retrievedSet.getGearClass(),
-                gearItemList
-                ));
+                gearItemsRequestList));
 
         return new GearSetResponse(
                 retrievedSet.getId(),
                 retrievedSet.getGearClass(),
                 averageItemLevel,
-                slotMapItems);
+                itemListRequest);
     }
 
     public void deleteGearSetEquipment(Long gearSetId, List<Long> itemIdRequest) {
