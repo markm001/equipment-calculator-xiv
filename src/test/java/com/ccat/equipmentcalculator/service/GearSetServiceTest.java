@@ -1,5 +1,6 @@
 package com.ccat.equipmentcalculator.service;
 
+import com.ccat.equipmentcalculator.client.XivApiMockClient;
 import com.ccat.equipmentcalculator.exception.InvalidItemSlotException;
 import com.ccat.equipmentcalculator.exception.InvalidJobClassException;
 import com.ccat.equipmentcalculator.model.GearSetResponse;
@@ -33,7 +34,7 @@ public class GearSetServiceTest {
     public void init() {
         this.gearSetDao = mock(GearSetDao.class);
         this.itemDao = mock(ItemDao.class);
-        this.itemService = new ItemService(itemDao);
+        this.itemService = new ItemService(itemDao, new XivApiMockClient());
         this.service = new GearSetService(gearSetDao, itemService);
     }
 
@@ -106,6 +107,23 @@ public class GearSetServiceTest {
             //when
             service.updateGearSetEquipment(emptyGearSet.getId(), newGearItemList);
         });
+    }
+
+    @Test
+    public void test_createSlotItemMapForNonPaladinClass_returnSlotItemMapWithoutSecondary() {
+        //given
+        GearSet warriorSet = generateGearSet(CharacterClass.WARRIOR);
+        GearSet paladinSet = generateGearSet(CharacterClass.PALADIN);
+        Item randItem = generateItem(ItemSlot.PRIMARY, Set.of(ClassJobCategory.WAR, ClassJobCategory.PLD));
+        given(gearSetDao.findById(warriorSet.getId())).willReturn(Optional.of(warriorSet));
+        given(gearSetDao.findById(paladinSet.getId())).willReturn(Optional.of(paladinSet));
+        //when
+        Map<ItemSlot, Item> slotMapForWarrior = service.createSlotItemMap(warriorSet, List.of(randItem));
+        Map<ItemSlot, Item> slotMapForPaladin = service.createSlotItemMap(paladinSet, List.of(randItem));
+
+        //then
+        assertThat(slotMapForWarrior.containsKey(ItemSlot.SECONDARY)).isFalse();
+        assertThat(slotMapForPaladin.containsKey(ItemSlot.SECONDARY)).isTrue();
     }
 
     private GearItems generateGearItemsFromItem(ItemSlot secondary, Item item2) {

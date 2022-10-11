@@ -52,14 +52,7 @@ public class GearSetService {
 
         List<Item> retrievedItems = itemService.getItemsByIds(itemIds);
 
-        Map<ItemSlot, Item> itemSlotMap = new HashMap<>();
-        for(ItemSlot slot : ItemSlot.values()) {
-            Item itemForSlot = retrievedItems.stream()
-                    .filter(rI -> rI.getItemSlot().equals(slot))
-                    .findFirst()
-                    .orElse(new Item());
-            itemSlotMap.put(slot, itemForSlot);
-        }
+        Map<ItemSlot, Item> itemSlotMap = createSlotItemMap(retrievedSet, retrievedItems);
 
         List<Item> slotItems = new ArrayList<>(itemSlotMap.values());
         int averageItemLevel = calculateAverageItemLevels(slotItems);
@@ -72,9 +65,27 @@ public class GearSetService {
         );
     }
 
+    public Map<ItemSlot, Item> createSlotItemMap(GearSet retrievedSet, List<Item> retrievedItems) {
+        Map<ItemSlot, Item> itemSlotMap = new HashMap<>();
+        for(ItemSlot slot : ItemSlot.values()) {
+            Item itemForSlot = retrievedItems.stream()
+                    .filter(rI -> rI.getItemSlot().equals(slot))
+                    .findFirst()
+                    .orElse(new Item());
+            itemSlotMap.put(slot, itemForSlot);
+        }
+
+        // remove SECONDARY-ItemSlot for non-paladin
+        if(!retrievedSet.getGearClass().equals(CharacterClass.PALADIN)) {
+            itemSlotMap.remove(ItemSlot.SECONDARY);
+        }
+        return itemSlotMap;
+    }
+
     public GearSetResponse updateGearSetEquipment(Long gearSetId, List<GearItems> gearItemsRequest) {
         // check GearSet validity:
         GearSet retrievedSet = retrieveGearSetById(gearSetId);
+
         // get currently equipped GearSet Items:
         List<Long> oldItemIdsRequest = retrievedSet.getEquippedItems().stream()
                 .map(GearItems::getItemId)
@@ -119,14 +130,7 @@ public class GearSetService {
                 .collect(Collectors.toList());
 
         // compile Slot-Map - Item or empty Item
-        Map<ItemSlot, Item> itemSlotMap = new HashMap<>();
-        for(ItemSlot slot : ItemSlot.values()) {
-            Item item = itemListRequest.stream()
-                    .filter(i -> i.getItemSlot().equals(slot))
-                    .findFirst()
-                    .orElse(new Item());
-            itemSlotMap.put(slot, item);
-        }
+        Map<ItemSlot, Item> itemSlotMap = createSlotItemMap(retrievedSet, itemListRequest);
 
         // Calculate average Item-Level for all Items:
         List<Item> allSlotItems = new ArrayList<>(itemSlotMap.values());

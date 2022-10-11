@@ -1,6 +1,6 @@
 package com.ccat.equipmentcalculator.controller;
 
-import com.ccat.equipmentcalculator.model.entity.GearSet;
+import com.ccat.equipmentcalculator.client.XivApiClient;
 import com.ccat.equipmentcalculator.model.entity.Item;
 import com.ccat.equipmentcalculator.model.repository.ItemDao;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,11 @@ import java.util.Optional;
 @RestController
 public class ItemController {
     private final ItemDao itemDao;
+    private final XivApiClient xivApiClient;
 
-    public ItemController(ItemDao itemDao) {
+    public ItemController(ItemDao itemDao, XivApiClient xivApiClient) {
         this.itemDao = itemDao;
+        this.xivApiClient = xivApiClient;
     }
 
     @RequestMapping("/items/{id}")
@@ -35,5 +37,4 @@ public class ItemController {
     public List<Item> getItemsByListIds(@RequestBody List<Long> itemIds) {
         return itemDao.findByIds(itemIds);
     }
-
 }
