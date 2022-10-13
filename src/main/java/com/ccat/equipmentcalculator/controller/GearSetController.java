@@ -44,10 +44,9 @@ public class GearSetController {
         return gearSetService.getGearSetById(setId);
     }
 
-    @RequestMapping("/gearsets/{id}/items/{level}")
+    @RequestMapping("/gearsets/{id}/items")
     public List<Item> getItemsForGearSetIdAndLevel(
-            @PathVariable(name="id") Long setId,
-            @PathVariable(name="level") int level) {
-        return gearSetService.getItemsByGearSetClassAndLevel(setId, level);
+            @PathVariable(name="id") Long setId) {
+        return gearSetService.getItemsByGearSetClassAndLevel(setId);
     }
 }

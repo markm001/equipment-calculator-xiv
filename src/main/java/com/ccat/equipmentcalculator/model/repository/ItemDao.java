@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Deprecated
 @Repository
 public interface ItemDao extends JpaRepository<Item, Long> {
     @Query(value = "SELECT i FROM Item i JOIN FETCH i.jobCategories category WHERE category =:category AND level =:level")

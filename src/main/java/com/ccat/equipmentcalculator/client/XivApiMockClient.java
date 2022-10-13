@@ -1,9 +1,11 @@
 package com.ccat.equipmentcalculator.client;
 
+import com.ccat.equipmentcalculator.exception.InvalidIdException;
 import com.ccat.equipmentcalculator.model.entity.Item;
 import com.ccat.equipmentcalculator.model.entity.enums.ClassJobCategory;
 import com.ccat.equipmentcalculator.model.entity.enums.ItemSlot;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -34,9 +36,13 @@ public class XivApiMockClient implements XivApiClient {
     );
 
     public XivApiMockClient() {
-        for(int i=0; i<900; i++){
+        for(int i=0; i<50; i++){
             itemList.add(generateRandomItem());
         }
+    }
+
+    public void saveItems(List<Item> itemRequest) {
+        itemList.addAll(itemRequest);
     }
 
     @Override
@@ -44,6 +50,14 @@ public class XivApiMockClient implements XivApiClient {
         return itemList.stream()
                 .filter(i -> (i.getJobCategories().contains(category))&&(i.getLevel()==level))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Item getItemById(Long id) {
+        return itemList.stream().filter(i -> i.getId().equals(id)).findFirst()
+                .orElseThrow(
+                        new InvalidIdException(String.format("Item with Id:%d not found.", id),
+                                HttpStatus.BAD_REQUEST));
     }
 
     public List<Item> getAllItems() {

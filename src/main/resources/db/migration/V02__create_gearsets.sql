@@ -8,6 +8,7 @@ create table gearsets (
    id bigint not null,
     gear_class varchar(50) not null,
     profile_id bigint not null,
+    level integer not null,
     primary key (id)
 );
 
@@ -20,13 +21,3 @@ alter table gearsets
    add constraint gearsets_profile_id_fk
    foreign key (profile_id)
    references profiles (id);
-
-
-
-
-
-
-alter table gearset_items
-   add constraint gearset_items_item_id_fk
-   foreign key (item_id)
-   references items_tmp (id);

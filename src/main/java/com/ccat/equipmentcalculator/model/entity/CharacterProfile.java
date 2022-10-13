@@ -12,7 +12,6 @@ public class CharacterProfile {
 
     @Enumerated(EnumType.STRING)
     CharacterClass characterClass;
-    int level;
 
     @Transient
     StatBlock statBlock;
@@ -21,14 +20,10 @@ public class CharacterProfile {
     public CharacterProfile() {
 
     }
-    public CharacterProfile(CharacterClass characterClass, int level) {
-        this.characterClass = characterClass;
-        this.level = level;
-    }
-    public CharacterProfile(Long id, CharacterClass characterClass, int level, StatBlock statBlock) {
+
+    public CharacterProfile(Long id, CharacterClass characterClass, StatBlock statBlock) {
         this.id = id;
         this.characterClass = characterClass;
-        this.level = level;
         this.statBlock = statBlock;
     }
 
@@ -39,10 +34,6 @@ public class CharacterProfile {
 
     public CharacterClass getCharacterClass() {
         return characterClass;
-    }
-
-    public int getLevel() {
-        return level;
     }
 
     public StatBlock getStatBlock() {

@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Deprecated
 @DataJpaTest
 @AutoConfigureTestDatabase
 @ActiveProfiles("test")

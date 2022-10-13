@@ -34,6 +34,7 @@ public class GearSetService {
         GearSet savedGearSet = new GearSet(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
                 gearSetRequest.getProfileId(),
+                gearSetRequest.getLevel(),
                 gearSetRequest.getGearClass(),
                 List.of());
 
@@ -50,7 +51,7 @@ public class GearSetService {
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
 
-        List<Item> retrievedItems = itemService.getItemsByIds(itemIds);
+        List<Item> retrievedItems = getItemsForIds(retrievedSet, itemIds);
 
         Map<ItemSlot, Item> itemSlotMap = createSlotItemMap(retrievedSet, retrievedItems);
 
@@ -86,17 +87,20 @@ public class GearSetService {
         // check GearSet validity:
         GearSet retrievedSet = retrieveGearSetById(gearSetId);
 
+        List<Item> validItemsForGearSet = itemService.getItemsByCategoryAndLevel(
+                retrievedSet.getGearClass().getAbbreviation(), retrievedSet.getLevel());
+
         // get currently equipped GearSet Items:
         List<Long> oldItemIdsRequest = retrievedSet.getEquippedItems().stream()
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
-        List<Item> oldItemList = itemService.getItemsByIds(oldItemIdsRequest);
+        List<Item> oldItemList = getItemsForIds(retrievedSet, oldItemIdsRequest);
 
         // get requested Items via Ids:
         List<Long> itemIdsRequest = gearItemsRequest.stream()
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
-        List<Item> newItemList = itemService.getItemsByIds(itemIdsRequest);
+        List<Item> newItemList = compareItemListWithIdList(validItemsForGearSet, itemIdsRequest);
 
         // compare request slots to actual item-slot & job-class and actual item-class:
         gearItemsRequest
@@ -108,12 +112,12 @@ public class GearSetService {
                                 String.format("Item with Id:%d and Slot:%s cannot be equipped into Slot:%s",item.getId(),item.getItemSlot(),gI.getItemSlot()),
                                 HttpStatus.BAD_REQUEST);
                     }
-                    if(!item.getJobCategories().contains(retrievedSet.getGearClass().getAbbreviation())) {
-                        throw new InvalidJobClassException(
-                                String.format("Item with Id:%d and Job-Class:%s cannot be equipped to Job-Class:%s",
-                                        item.getId(), item.getJobCategories(),retrievedSet.getGearClass().getAbbreviation()),
-                                HttpStatus.BAD_REQUEST);
-                    }
+//                    if(!item.getJobCategories().contains(retrievedSet.getGearClass().getAbbreviation())) {
+//                        throw new InvalidJobClassException(
+//                                String.format("Item with Id:%d and Job-Class:%s cannot be equipped to Job-Class:%s",
+//                                        item.getId(), item.getJobCategories(),retrievedSet.getGearClass().getAbbreviation()),
+//                                HttpStatus.BAD_REQUEST);
+//                    }
                 });
 
         // all newItem-Slots:
@@ -148,6 +152,7 @@ public class GearSetService {
         gearSetDao.save(new GearSet(
                 retrievedSet.getId(),
                 retrievedSet.getProfileId(),
+                retrievedSet.getLevel(),
                 retrievedSet.getGearClass(),
                 gearItemsRequestList));
 
@@ -168,6 +173,7 @@ public class GearSetService {
         gearSetDao.save(new GearSet(
                 retrievedSet.getId(),
                 retrievedSet.getProfileId(),
+                retrievedSet.getLevel(),
                 retrievedSet.getGearClass(),
                 filteredGearSet));
     }
@@ -193,7 +199,7 @@ public class GearSetService {
         List<GearSet> profileGearSets = gearSetDao.findByProfileId(profileId);
         return profileGearSets.stream()
                 .map(gS -> {
-                    List<Item> gearSetItems = mapGearItemsToItemIds(gS.getEquippedItems());
+                    List<Item> gearSetItems = mapGearItemsToItem(gS);
                     return new GearSetResponse(
                             gS.getId(),
                             gS.getGearClass(),
@@ -203,20 +209,48 @@ public class GearSetService {
                 .collect(Collectors.toList());
     }
 
-    public List<Item> getItemsByGearSetClassAndLevel(Long gearSetId, int level) {
+    public List<Item> getItemsByGearSetClassAndLevel(Long gearSetId) {
         GearSet retrievedGearSet = gearSetDao.findById(gearSetId)
                 .orElseThrow(new InvalidIdException(
                         String.format("GearSet with Id:%d not found.",gearSetId),HttpStatus.BAD_REQUEST));
 
         CharacterClass desiredGearClass = retrievedGearSet.getGearClass();
 
-        return itemService.getItemsByCategoryAndLevel(desiredGearClass.getAbbreviation(), level);
+        return itemService.getItemsByCategoryAndLevel(desiredGearClass.getAbbreviation(), retrievedGearSet.getLevel());
     }
 
-    private List<Item> mapGearItemsToItemIds(List<GearItems> gearItems) {
+    private List<Item> mapGearItemsToItem(GearSet gearSet) {
+        List<GearItems> gearItems = gearSet.getEquippedItems();
+
         List<Long> itemIds = gearItems.stream()
                 .map(GearItems::getItemId)
                 .collect(Collectors.toList());
-        return itemService.getItemsByIds(itemIds);
+        return getItemsForIds(gearSet, itemIds);
+    }
+
+    private List<Item> getItemsForIds(GearSet gearSet, List<Long> itemIds) {
+        List<Item> itemsByCategoryAndLevel =
+                itemService.getItemsByCategoryAndLevel(gearSet.getGearClass().getAbbreviation(), gearSet.getLevel());
+
+        return itemsByCategoryAndLevel.stream()
+                .filter(i -> itemIds.contains(i.getId()))
+                .collect(Collectors.toList());
+    }
+
+    private List<Item> compareItemListWithIdList(List<Item> validItemsForGearSet, List<Long> itemIdsRequest) {
+
+        List<Long> allValidItemIds = validItemsForGearSet.stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
+
+        //check validity:
+        if(!new HashSet<>(allValidItemIds).containsAll(itemIdsRequest)) {
+            throw new InvalidJobClassException(
+                    "Requested Item Ids are not valid for the designated Class and Level!",HttpStatus.BAD_REQUEST);
+        }
+
+        return validItemsForGearSet.stream()
+                .filter(i -> itemIdsRequest.contains(i.getId()))
+                .collect(Collectors.toList());
     }
 }

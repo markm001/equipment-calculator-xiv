@@ -28,7 +28,6 @@ public class CharacterProfileService {
         return characterProfileDao.save(new CharacterProfile(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
                 characterProfileRequest.getCharacterClass(),
-                characterProfileRequest.getLevel(),
                 new StatBlock()));
     }
 
@@ -37,7 +36,6 @@ public class CharacterProfileService {
 
         CharacterProfile updatedProfile = new CharacterProfile(retrievedProfile.getId(),
                 profileRequest.getCharacterClass(),
-                profileRequest.getLevel(),
                 new StatBlock()
         );
 
@@ -69,7 +67,6 @@ public class CharacterProfileService {
         return new CharacterProfileResponse(
                 retrievedProfile.getId(),
                 retrievedProfile.getCharacterClass(),
-                retrievedProfile.getLevel(),
                 retrievedGearSets,
                 profileStatBlock
                 );

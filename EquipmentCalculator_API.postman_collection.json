@@ -12,13 +12,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/items/1",
+					"raw": "{{host}}/items/35227",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"items",
-						"1"
+						"35227"
 					]
 				}
 			},
@@ -59,13 +59,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/profiles/4672535249397500236",
+					"raw": "{{host}}/profiles/5651226895765949819",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"profiles",
-						"4672535249397500236"
+						"5651226895765949819"
 					]
 				}
 			},
@@ -78,7 +78,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"characterClass\": \"WARRIOR\",\r\n    \"level\": 90\r\n}",
+					"raw": "{\r\n    \"characterClass\": \"PALADIN\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -104,7 +104,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"characterClass\": \"PALADIN\",\r\n    \"level\": 90\r\n}",
+					"raw": "{\r\n    \"characterClass\": \"PALADIN\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -112,13 +112,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/profiles/4672535249397500236",
+					"raw": "{{host}}/profiles/2552561424970826020",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"profiles",
-						"4672535249397500236"
+						"2552561424970826020"
 					]
 				}
 			},
@@ -130,13 +130,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/gearsets/2828284150113062136",
+					"raw": "{{host}}/gearsets/4734829831524601391",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"gearsets",
-						"2828284150113062136"
+						"4734829831524601391"
 					]
 				}
 			},
@@ -148,15 +148,14 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/gearsets/2828284150113062136/items/90",
+					"raw": "{{host}}/gearsets/4734829831524601391/items",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"gearsets",
-						"2828284150113062136",
-						"items",
-						"90"
+						"4734829831524601391",
+						"items"
 					]
 				}
 			},
@@ -169,7 +168,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"characterLevel\": 90,\r\n    \"gearClass\": \"PALADIN\"\r\n}",
+					"raw": "{\r\n    \"profileId\": 5651226895765949819,\r\n    \"level\": 90,\r\n    \"gearClass\": \"PALADIN\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -195,7 +194,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "[\r\n    {\r\n        \"itemSlot\":\"SECONDARY\",\r\n        \"itemId\":2\r\n    }\r\n]",
+					"raw": "[\r\n    {\r\n        \"itemSlot\":\"PRIMARY\",\r\n        \"itemId\":34850\r\n    },\r\n    {\r\n        \"itemSlot\":\"SECONDARY\",\r\n        \"itemId\":34869\r\n    },\r\n    {\r\n        \"itemSlot\":\"HEAD\",\r\n        \"itemId\":34870\r\n    },\r\n    {\r\n        \"itemSlot\":\"BODY\",\r\n        \"itemId\":34871\r\n    },\r\n    {\r\n        \"itemSlot\":\"GLOVES\",\r\n        \"itemId\":34872\r\n    },\r\n    {\r\n        \"itemSlot\":\"LEGS\",\r\n        \"itemId\":34873\r\n    },\r\n    {\r\n        \"itemSlot\":\"FEET\",\r\n        \"itemId\":34874\r\n    },\r\n    {\r\n        \"itemSlot\":\"EARS\",\r\n        \"itemId\":34830\r\n    },\r\n    {\r\n        \"itemSlot\":\"NECK\",\r\n        \"itemId\":34835\r\n    },\r\n    {\r\n        \"itemSlot\":\"WRIST\",\r\n        \"itemId\":34840\r\n    },\r\n    {\r\n        \"itemSlot\":\"RING\",\r\n        \"itemId\":34845\r\n    }\r\n]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -203,13 +202,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/gearsets/2828284150113062136/items",
+					"raw": "{{host}}/gearsets/4734829831524601391/items",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"gearsets",
-						"2828284150113062136",
+						"4734829831524601391",
 						"items"
 					]
 				}
@@ -223,7 +222,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "[ 1, 2 ]",
+					"raw": "[ 34874, 34871 ]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -231,13 +230,13 @@
 					}
 				},
 				"url": {
-					"raw": "{{host}}/gearsets/2828284150113062136/items",
+					"raw": "{{host}}/gearsets/4734829831524601391/items",
 					"host": [
 						"{{host}}"
 					],
 					"path": [
 						"gearsets",
-						"2828284150113062136",
+						"4734829831524601391",
 						"items"
 					]
 				}

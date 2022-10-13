@@ -3,38 +3,28 @@ package com.ccat.equipmentcalculator.controller;
 import com.ccat.equipmentcalculator.client.XivApiClient;
 import com.ccat.equipmentcalculator.model.entity.Item;
 import com.ccat.equipmentcalculator.model.repository.ItemDao;
+import com.ccat.equipmentcalculator.model.service.ItemService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 public class ItemController {
-    private final ItemDao itemDao;
-    private final XivApiClient xivApiClient;
+    private final ItemService itemService;
 
-    public ItemController(ItemDao itemDao, XivApiClient xivApiClient) {
-        this.itemDao = itemDao;
-        this.xivApiClient = xivApiClient;
+    public ItemController(ItemService itemService) {
+        this.itemService = itemService;
     }
 
     @RequestMapping("/items/{id}")
-    public ResponseEntity<Item> getItemById(@PathVariable(name="id") Long itemId) {
-        Optional<Item> retrievedItem = itemDao.findById(itemId);
-        if(retrievedItem.isPresent()) {
-            return ResponseEntity.ok(retrievedItem.get());
-        }
-        else {
-            return ResponseEntity.notFound().build();
-        }
+    public Item getItemById(@PathVariable(name="id") Long itemId) {
+        return itemService.getItemById(itemId);
     }
 
-    @RequestMapping("/items")
-    public List<Item> getItemsByListIds(@RequestBody List<Long> itemIds) {
-        return itemDao.findByIds(itemIds);
-    }
+//    @RequestMapping("/items")
+//    public List<Item> getItemsByListIds(@RequestBody List<Long> itemIds) {
+//        return itemDao.findByIds(itemIds);
+//    }
 }

@@ -13,6 +13,8 @@ public class GearSet {
 
     private Long profileId;
 
+    private int level;
+
     @Enumerated(EnumType.STRING)
     private CharacterClass gearClass;
 
@@ -28,9 +30,11 @@ public class GearSet {
     public GearSet(Long id) {
         this.id = id;
     }
-    public GearSet(Long id, Long profileId, CharacterClass gearClass, List<GearItems> equippedItems) {
+
+    public GearSet(Long id, Long profileId, int level, CharacterClass gearClass, List<GearItems> equippedItems) {
         this.id = id;
         this.profileId = profileId;
+        this.level = level;
         this.gearClass = gearClass;
         this.equippedItems = equippedItems;
     }
@@ -52,6 +56,10 @@ public class GearSet {
         return equippedItems;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -59,6 +67,7 @@ public class GearSet {
 
         GearSet gearSet = (GearSet) o;
 
+        if (level != gearSet.level) return false;
         if (!id.equals(gearSet.id)) return false;
         if (!profileId.equals(gearSet.profileId)) return false;
         if (gearClass != gearSet.gearClass) return false;
@@ -69,6 +78,7 @@ public class GearSet {
     public int hashCode() {
         int result = id.hashCode();
         result = 31 * result + profileId.hashCode();
+        result = 31 * result + level;
         result = 31 * result + gearClass.hashCode();
         result = 31 * result + equippedItems.hashCode();
         return result;
@@ -79,6 +89,7 @@ public class GearSet {
         return "GearSet{" +
                 "id=" + id +
                 ", profileId=" + profileId +
+                ", level=" + level +
                 ", gearClass=" + gearClass +
                 ", equippedItems=" + equippedItems +
                 '}';

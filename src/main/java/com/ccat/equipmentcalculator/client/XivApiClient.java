@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface XivApiClient {
     public List<Item> getItemsByCategoryAndLevel(ClassJobCategory category, int level);
+    public Item getItemById(Long id);
 }

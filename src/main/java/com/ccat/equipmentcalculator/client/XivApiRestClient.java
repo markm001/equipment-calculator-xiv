@@ -44,11 +44,9 @@ public class XivApiRestClient implements XivApiClient {
                 category,
                 level);
         String columnInfo = "&columns=ID,Name,LevelEquip,LevelItem,EquipSlotCategory.ID,Stats,ClassJobCategory";
-        String requestUrl = baseUrl + requestString + columnInfo + "&limit=10";
+        String requestUri = baseUrl + requestString + columnInfo + "&limit=250";
 
-        System.out.println(requestUrl);
-
-        XivClientResponse response = restTemplate.getForObject(requestUrl, XivClientResponse.class);
+        XivClientResponse response = restTemplate.getForObject(requestUri, XivClientResponse.class);
 
         assert response != null;
         List<ItemResponse> itemData = response.getResults();
@@ -56,6 +54,16 @@ public class XivApiRestClient implements XivApiClient {
         return itemData.stream()
                 .map(i -> mapItemDataToItem(i))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Item getItemById(Long id) {
+        RestTemplate restTemplate = new RestTemplate();
+        String requestUri = baseUrl + "/item/" + id;
+        ItemResponse itemResponse = restTemplate.getForObject(requestUri, ItemResponse.class);
+
+        assert itemResponse != null;
+        return mapItemDataToItem(itemResponse);
     }
 
     private Item mapItemDataToItem(ItemResponse data) {

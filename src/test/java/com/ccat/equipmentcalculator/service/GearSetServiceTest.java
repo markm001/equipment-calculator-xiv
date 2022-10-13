@@ -1,5 +1,6 @@
 package com.ccat.equipmentcalculator.service;
 
+import com.ccat.equipmentcalculator.client.XivApiClient;
 import com.ccat.equipmentcalculator.client.XivApiMockClient;
 import com.ccat.equipmentcalculator.exception.InvalidItemSlotException;
 import com.ccat.equipmentcalculator.exception.InvalidJobClassException;
@@ -28,26 +29,27 @@ public class GearSetServiceTest {
     private GearSetService service;
     private GearSetDao gearSetDao;
     private ItemService itemService;
-    private ItemDao itemDao;
+    private XivApiMockClient xivClient;
 
     @BeforeEach
     public void init() {
         this.gearSetDao = mock(GearSetDao.class);
-        this.itemDao = mock(ItemDao.class);
-        this.itemService = new ItemService(itemDao, new XivApiMockClient());
+        this.xivClient = new XivApiMockClient();
+        this.itemService = new ItemService(xivClient);
         this.service = new GearSetService(gearSetDao, itemService);
     }
 
     @Test
     public void test_updateGearSet_returnGearSetResponse() {
         //given
-        GearSet emptyGearSet = generateGearSet(CharacterClass.PALADIN);
+        CharacterClass characterClass = CharacterClass.PALADIN;
+        GearSet emptyGearSet = generateGearSet(characterClass);
         Item item = generateItem(ItemSlot.PRIMARY,Set.of(ClassJobCategory.PLD));
         GearItems e1 = generateGearItemsFromItem(ItemSlot.PRIMARY, item);
         List<GearItems> newGearItemList = List.of(e1);
 
         given(gearSetDao.findById(emptyGearSet.getId())).willReturn(Optional.of(emptyGearSet));
-        given(itemDao.findByIds(List.of(item.getId()))).willReturn(List.of(item));
+        xivClient.saveItems(List.of(item));
 
         int itemLevel = item.getItemLevel() / ItemSlot.values().length;
 
@@ -68,13 +70,14 @@ public class GearSetServiceTest {
         //given
         ItemSlot slotToEquipItem = ItemSlot.SECONDARY;
 
-        GearSet emptyGearSet = generateGearSet(CharacterClass.PALADIN);
+        CharacterClass characterClass = CharacterClass.PALADIN;
+        GearSet emptyGearSet = generateGearSet(characterClass);
         Item item = generateItem(ItemSlot.PRIMARY,Set.of(ClassJobCategory.PLD));
         GearItems e1 = generateGearItemsFromItem(slotToEquipItem, item);
         List<GearItems> newGearItemList = List.of(e1);
 
         given(gearSetDao.findById(emptyGearSet.getId())).willReturn(Optional.of(emptyGearSet));
-        given(itemDao.findByIds(List.of(item.getId()))).willReturn(List.of(item));
+        xivClient.saveItems(List.of(item));
 
         //then
         assertThrows(InvalidItemSlotException.class, () -> {
@@ -100,7 +103,8 @@ public class GearSetServiceTest {
         List<Long> itemIds = List.of(item.getId(), item2.getId());
 
         given(gearSetDao.findById(emptyGearSet.getId())).willReturn(Optional.of(emptyGearSet));
-        given(itemDao.findByIds(itemIds)).willReturn(List.of(item, item2));
+//        given(xivClient.getItemsByCategoryAndLevel(gearSetJobCategory.getAbbreviation(),90)).willReturn(List.of(item, item2));
+        xivClient.saveItems(List.of(item, item2));
 
         //then
         assertThrows(InvalidJobClassException.class, () -> {
@@ -145,11 +149,11 @@ public class GearSetServiceTest {
     }
 
     private GearSet generateGearSet(CharacterClass characterClass) {
-        GearSet emptyGearSet = new GearSet(
+        return new GearSet(
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
                 UUID.randomUUID().getMostSignificantBits()&Long.MAX_VALUE,
+                90,
                 characterClass,
                 List.of(new GearItems()));
-        return emptyGearSet;
     }
 }

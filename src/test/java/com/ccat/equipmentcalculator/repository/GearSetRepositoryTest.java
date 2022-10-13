@@ -60,6 +60,7 @@ public class GearSetRepositoryTest {
         List<GearSet> setResponse = gearSetDao.findByProfileId(profile.getId());
         //then
         assertThat(setResponse.size()).isEqualTo(1);
+        
 //        assertThat(setResponse).containsExactly(setRequest);
         assertThat(setResponse.get(0))
                 .usingRecursiveComparison()
@@ -91,7 +92,6 @@ public class GearSetRepositoryTest {
         CharacterProfile profileRequest = new CharacterProfile(
                 UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
                 CharacterClass.PALADIN,
-                90,
                 new StatBlock());
         profileDao.save(profileRequest);
         return profileRequest;
@@ -101,6 +101,7 @@ public class GearSetRepositoryTest {
         return new GearSet(
                 UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE,
                 profile.getId(),
+                90,
                 profile.getCharacterClass(),
                 new ArrayList<>());
     }
